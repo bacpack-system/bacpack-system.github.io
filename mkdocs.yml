@@ -1,0 +1,5 @@
+site_name: BacPack Stack Documentation
+site_url: https://bacpack-system.github.io
+theme:
+  name: material
+
