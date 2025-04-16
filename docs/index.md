@@ -8,9 +8,9 @@ The BacPack system is created to build and manage dependencies of CMake based pr
 
 The main projects of BacPack system:
 
- - packager (https://github.com/bacpack-system/packager)
- - package-tracker (https://github.com/bacpack-system/package-tracker)
+ - packager ([https://github.com/bacpack-system/packager](https://github.com/bacpack-system/packager))
+ - package-tracker ([https://github.com/bacpack-system/package-tracker](https://github.com/bacpack-system/package-tracker))
 
 The system is also using this project:
 
- - cmakelib (https://github.com/cmakelib/cmakelib)
+ - cmakelib ([https://github.com/cmakelib/cmakelib](https://github.com/cmakelib/cmakelib))
