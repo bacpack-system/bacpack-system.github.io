@@ -15,6 +15,12 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
 
+nav:
+  - Introduction: index.md
+  - System level architecture: architecture.md
+  - Use cases: use_cases.md
+  - Example usage: example_usage.md
+
 markdown_extensions:
   - pymdownx.superfences:
       custom_fences:
