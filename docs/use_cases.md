@@ -1,7 +1,7 @@
 # Use cases
 
 There are several use cases how to use BacPack system, which will be described in this document.
-All these use cases are described in [Usage](./usage.md).
+All these use cases are described in [Usage](./example_usage.md).
 
 The change of data and actions between user and BacPack components shows following sequence diagram.
 

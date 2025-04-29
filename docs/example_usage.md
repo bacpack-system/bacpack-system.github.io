@@ -110,9 +110,9 @@ The `context` is a path to the Package Context, the `image-name` is a target ima
 `output-dir` is a path to the Package Repository, which already can have built Packages or it can
 be an empty Git repository.
 
-We will put this Package to
-[BringAuto's main Package Repository](https://gitea.bringauto.com/fleet-protocol/package-repository").
-We need to clone this repository, then the path to it can be given to Packager executable.
+We want Packager to put this Package to
+[BringAuto's main Package Repository](https://gitea.bringauto.com/fleet-protocol/package-repository).
+Firstly, the repository must be cloned, then the path to it can be given to Packager executable.
 
 The command for building Package `dep1` is:
 
