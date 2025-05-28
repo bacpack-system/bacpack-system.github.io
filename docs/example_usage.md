@@ -154,7 +154,6 @@ This file must be included in application's CMakeLists.txt and then the Package 
 with `FIND_PACKAGE`. Example CMake code:
 
 ```cmake
-LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 FIND_PACKAGE(dep1 1.0.0 REQUIRED)
 ```
 

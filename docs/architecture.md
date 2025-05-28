@@ -10,7 +10,7 @@ In a nutshell, BacPack system contains these components:
  - Package Repository
  - Package Context
  - Package Tracker
- - target project
+ - Target project
 
 The links between components are shown on next graph:
 
@@ -44,11 +44,15 @@ zip archive of its file and copies it to Package Repository.
 Package Repository is a Git repository of Packages and Apps, which are built and copied there by
 Packager.
 
+It is specific for each project.
+
 ### Package Context
 
 Package Context contains definition of Docker images, Packages and Apps in a strict directory
 structure (this structure is defined in Packager documentation). The Packages and Apps must use
 Docker images defined in the same Package Context.
+
+It is specific for each project.
 
 ### Package Tracker
 
