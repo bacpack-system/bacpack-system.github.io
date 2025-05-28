@@ -49,8 +49,8 @@ It is specific for each project.
 ### Package Context
 
 Package Context contains definition of Docker images, Packages and Apps in a strict directory
-structure (this structure is defined in Packager documentation). The Packages and Apps must use
-Docker images defined in the same Package Context.
+structure (defined [here](https://github.com/bacpack-system/packager/blob/master/doc/ContextStructure.md)).
+The Packages and Apps must use Docker images defined in the same Package Context.
 
 It is specific for each project.
 

@@ -34,7 +34,7 @@ sequenceDiagram
       Target Project->>Package Tracker: Asks for desired Package
       Package Repository->>Package Tracker: Takes present Package
       Package Tracker->>Target Project: Adds Package to build
-      Target Project->>Target Project: Builds itself
+      Target Project->>Target Project: Project build
     end
   end
 ```

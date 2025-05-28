@@ -8,8 +8,9 @@ it to the BringAuto Package Repository and add it to target application.
 
 Our example application will use a Package named `dep1` as a dependency. This Package depends on
 Package `dep2`. First we need to create a definition files of these Packages inside a Package
-Context. The structure of Package Context is decribed more in Packager documentation, but there is
-a basic example:
+Context. The structure of Package Context is decribed more in Packager documentation. The more
+complete example is [here](https://github.com/bacpack-system/packager/tree/master/example).
+Simple example is:
 
 ```plaintext
 <context_directory>/
@@ -151,10 +152,25 @@ BA_PACKAGE_LIBRARY(dep1 v1.0.0)
 ```
 
 This file must be included in application's CMakeLists.txt and then the Package can be included
-with `FIND_PACKAGE`. Example CMake code:
+with `FIND_PACKAGE`. But first the cmakelib with required components must be included.
+Example CMake code:
 
 ```cmake
+# Including 'cmake/Dependencies.cmake' file
+INCLUDE(cmake/Dependencies.cmake)
+
+# Adding cmakelib with components
+FIND_PACKAGE(CMLIB COMPONENTS CMDEF CMUTIL STORAGE REQUIRED)
+
+# Adding dep1 Package
 FIND_PACKAGE(dep1 1.0.0 REQUIRED)
 ```
 
-More info about the macros is in Package Tracker repository.
+Each of the cmakelib components has its own git repository and adds specific functionality.
+Any or none of following components can be used:
+
+ - [CMDEF](https://github.com/cmakelib/cmakelib-component-cmdef) - adds wrappers for basic CMake features
+ - [CMUTIL](https://github.com/cmakelib/cmakelib-component-cmutil) - Provides functionality for other cmakelib components
+ - [STORAGE](https://github.com/cmakelib/cmakelib-component-storage) - mechanism for storing and retrieving build dependencies
+
+More info about the other macros is in Package Tracker repository.
