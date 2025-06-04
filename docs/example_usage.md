@@ -1,16 +1,18 @@
 # Example usage
 
-This document shows all use cases defined in [Use Cases](./use_cases.md) on an example target
-application which uses sample dependency - Package. Below are steps to build this dependency, put
-it to the BringAuto Package Repository and add it to target application.
+This document demonstrates the use cases defined in [Use Cases](./use_cases.md) using an example target
+application which uses sample dependency - Package. Below are steps to build this dependency, publish
+it to the Package Repository and include it in target application.
+
+For this example the BringAuto's specific Package Context and Package Repository will be used.
 
 ## Define a Package
 
 Our example application will use a Package named `dep1` as a dependency. This Package depends on
 Package `dep2`. First we need to create a definition files of these Packages inside a Package
-Context. The structure of Package Context is decribed more in Packager documentation. The more
+Context. The complete structure of Package Context is decribed in Packager documentation. The more
 complete example is [here](https://github.com/bacpack-system/packager/tree/master/example).
-Simple example is:
+Simplified example with `dep1` and `dep2` Packages is:
 
 ```plaintext
 <context_directory>/
@@ -92,7 +94,7 @@ The debug variation of `dep1` Package will be very similar with changes of `CMAK
 
 ## Build a Package
 
-After definition of Package `dep1` we can build it with Packager.
+After definition of both Packages we can build `dep1` with Packager.
 
 If the used image in our Package is not build on our system, it must be build with `build-image`
 Packager command. The command for building `image1` image could be:
@@ -107,12 +109,12 @@ The Packager command `build-package` for building Packages requires these parame
  - image-name
  - output-dir
 
-The `context` is a path to the Package Context, the `image-name` is a target image for Package and
-`output-dir` is a path to the Package Repository, which already can have built Packages or it can
-be an empty Git repository.
+The `context` parameter specifies the Package Context path, the `image-name` selects the target
+image for Package and `output-dir` points to the Package Repository, which already can have built
+Packages or it can be an empty Git repository.
 
-We want Packager to put this Package to
-[BringAuto's main Package Repository](https://gitea.bringauto.com/fleet-protocol/package-repository).
+We want Packager to put this Package to Packager Repository (specifically to 
+[BringAuto's main Package Repository](https://gitea.bringauto.com/fleet-protocol/package-repository)).
 Firstly, the repository must be cloned, then the path to it can be given to Packager executable.
 
 The command for building Package `dep1` is:
@@ -124,14 +126,15 @@ bap-builder build-package --context /path/to/package/context --image-name image1
 This command builds a Package `dep1` defined in Context for `image1` image, creates an archive
 of this Package and copies it to the output-dir (Package Repository). The command with
 `--build-deps` flag also builds all dependencies of given Package. In our case it also builds the
-`dep2` Package. More flags and settings of Packager are described in its documentation.
+`dep2` Package. Other flags and settings of Packager are described in its
+[documentation](https://github.com/bacpack-system/packager/tree/master/doc).
 
-After the Package is in Package Repository we can push it to origin.
+After the Package is in Package Repository, we can push it to origin.
 
 ## Include Package in an application
 
-We have built a dependency Package `dep1` and put it to remote BringAuto's Package Repository. Now
-we can use this Package in a CMake based application.
+We have built a dependency Package `dep1` and uploaded it to remote BringAuto's Package Repository.
+Now we can use this Package in a CMake based application.
 
 First we need to have cmakelib (link in [Introduction](./index.md)) installed on our system.
 
@@ -142,8 +145,9 @@ SET(STORAGE_LIST DEP)
 SET(STORAGE_LIST_DEP "https://github.com/bacpack-system/package-tracker.git")
 ```
 
-This will links the application with BringAuto's Package Tracker. This enables adding Packages from
-BringAuto's Package Repository (The Package Tracker points to Package Repository).
+This will links the application with Package Tracker specific for BringAuto. This enables adding
+Packages from BringAuto's specific Package Repository (The Package Tracker points to Package
+Repository).
 
 Then the dependencies must be defined in `cmake/Dependencies.cmake` like that:
 
