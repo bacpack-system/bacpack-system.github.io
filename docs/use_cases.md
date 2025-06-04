@@ -1,7 +1,7 @@
 # Use cases
 
 There are several use cases how to use BacPack system, which will be described in this document.
-All these use cases are described in [Usage](./example_usage.md).
+All these use cases are described further in [Usage](./example_usage.md).
 
 The change of data and actions between user and BacPack components shows following sequence diagram.
 
@@ -12,7 +12,7 @@ sequenceDiagram
   participant Package Repository
   participant Package Context
   participant Package Tracker
-  participant Target Project
+  participant Project
 
   rect
     Note right of User: Use case:<br/> Add Package to Context
@@ -26,15 +26,15 @@ sequenceDiagram
   end
   rect
     Note right of User: Use case:<br/> Use Package in project
-    User->>Target Project: Puts link of Package Tracker
-    User->>Target Project: Adds desired Package to CMakeLists
-    User->>Target Project: Initiates Project build
+    User->>Project: Puts link of Package Tracker
+    User->>Project: Adds desired Package to CMakeLists
+    User->>Project: Initiates Project build
     rect
-      Note right of Package Repository: Target Project build
-      Target Project->>Package Tracker: Asks for desired Package
+      Note right of Package Repository: Project build
+      Project->>Package Tracker: Asks for desired Package
       Package Repository->>Package Tracker: Takes present Package
-      Package Tracker->>Target Project: Adds Package to build
-      Target Project->>Target Project: Project build
+      Package Tracker->>Project: Adds Package to build
+      Project->>Project: Project build
     end
   end
 ```

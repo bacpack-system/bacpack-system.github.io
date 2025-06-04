@@ -20,6 +20,7 @@ nav:
   - System level architecture: architecture.md
   - Use cases: use_cases.md
   - Example usage: example_usage.md
+  - Term definition: term_definition.md
 
 markdown_extensions:
   - pymdownx.superfences:
