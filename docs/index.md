@@ -1,19 +1,17 @@
 # Introduction
 
-This is a documentation for BacPack System stack of BringAuto s.r.o.
+This is a documentation for BacPack System stack of BringAuto s.r.o. This system is a set of
+components, whose purpose is to create an environment for easy dependency and package management of
+CMake based projects.
 
-## Overview
-
-The BacPack system is created to build and manage dependencies of CMake based projects.
-
-### Main Components
+## Main Components
 
 The main components of BacPack system:
 
  - [packager](https://github.com/bacpack-system/packager)
  - [package-tracker](https://github.com/bacpack-system/package-tracker)
 
-### External tools
+## External tools
 
  - docker
  - [cmakelib](https://github.com/cmakelib/cmakelib)
