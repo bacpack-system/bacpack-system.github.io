@@ -34,15 +34,15 @@ flowchart LR
 
 Packager is a tool for building Packages and Apps. It takes a Package Context as an input.
 
-Both `build-package` and `build-app` commands builds Package or App specified in Package Context
-in a Docker container based on existing Docker image built by `build-image` command, creates a
-zip archive of its file and copies it to Package Repository.
+Both `build-package` and `build-app` commands build Package or App specified in Package Context
+in a Docker container based on existing Docker image built by `build-image` command, create a zip
+archive of its files and copy it to Package Repository.
 
 #### Package Tracker
 
-Package Tracker defines CMake macros for downloading, caching and populating Packages/Apps from
-Package Repository. The project has a link to Package Tracker repo to use Packages built in Package
-Repository.
+Package Tracker provides CMake macros that handle downloading, caching, and integrating
+Packages/Apps from Package Repository. Projects link to Package Tracker repository to use Packages
+built in Package Repository.
 
 The Package Tracker links to a Package Repository. This link must be changed to work with project
 specific Package Repository.
@@ -56,9 +56,9 @@ Packager.
 
 #### Package Context
 
-Package Context contains definition of Docker images, Packages and Apps in a [strict directory
-structure](https://github.com/bacpack-system/packager/blob/master/doc/ContextStructure.md).
-The Packages and Apps must use Docker images defined in the same Package Context.
+Package Context contains definitions of Docker images, Packages and Apps in a [strict directory
+structure](https://github.com/bacpack-system/packager/blob/master/doc/ContextStructure.md). The
+Packages and Apps must use Docker images defined in the same Package Context.
 
 ### External tools
 
