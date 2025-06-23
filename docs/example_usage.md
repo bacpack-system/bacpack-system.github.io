@@ -143,13 +143,15 @@ bap-builder build-package --context /path/to/package/context --image-name ubuntu
 This command builds a Package `curl` defined in Context for `ubuntu2404` image, creates an archive
 of this Package and copies it to the output-dir (Package Repository). The command with
 `--build-deps` flag also builds all dependencies of the given Package. In this case it also builds
-the `bzip`Package. Other flags and settings of Packager are described in its
+the `bzip` Package. Other flags and settings of Packager are described in its
 [documentation](https://github.com/bacpack-system/packager/tree/master/doc).
+
+The `curl` Package can now be used as a dependency for projects.
 
 ## Add Package to a project build
 
-The `curl` Package can now be used for building the
-[example project](https://github.com/bacpack-system/example-project).
+The [example project](https://github.com/bacpack-system/example-project) will be built in the
+following steps. The project uses `curl` Package built in previous steps as a dependency.
 
 ### Install cmakelib
 
@@ -209,9 +211,6 @@ FIND_PACKAGE(CURL REQUIRED)
      - [CMDEF](https://github.com/cmakelib/cmakelib-component-cmdef) - adds wrappers for basic CMake features
      - [CMUTIL](https://github.com/cmakelib/cmakelib-component-cmutil) - Provides functionality for other cmakelib components
      - [STORAGE](https://github.com/cmakelib/cmakelib-component-storage) - mechanism for storing and retrieving build dependencies
-
-
-TODO: Add installing (in example-project master)
 
 ### Build a project
 
