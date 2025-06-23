@@ -28,7 +28,7 @@ flowchart LR
   PT --> PR
 ```
 
-### Components
+### Main components
 
 #### Packager
 

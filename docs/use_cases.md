@@ -4,7 +4,7 @@ There are several use cases how to use BacPack system, which will be described i
 All these use cases are described further in [Usage](./example_usage.md).
 
 The following sequence diagram illustrates data flow and interactions between user and BacPack
-components.
+components for listed use cases.
 
 ```mermaid
 sequenceDiagram
@@ -42,9 +42,9 @@ sequenceDiagram
 
 ## Add Package to Package context
 
-To leverage BacPack system's dependency management capabilities, add a Package to Package Context.
-This Package can be built by Packager and hosted in a Package Repository. The Package can then be
-easily added to projects by including it in CMakeLists.
+After adding a Package Config to Package Context, the Package can be built by Packager and hosted
+in a Package Repository. The Package can then be easily added to projects by including it in
+CMakeLists.
 
 ## Use already built Packages in my CMake based project
 
