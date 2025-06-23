@@ -40,7 +40,7 @@ sequenceDiagram
   end
 ```
 
-## Add Package to Package context
+## Add Package to Package Context
 
 After adding a Package Config to Package Context, the Package can be built by Packager and hosted
 in a Package Repository. The Package can then be easily added to projects by including it in
