@@ -82,6 +82,11 @@ Repository for given target platform.
 ---
 classDiagram
     class Packager {
+      -context: Context
+      -readDockerfiles(context: Context)
+      -readAppConfigs(context: Context)
+      -readPackageConfigs(context: Context)
+      -readAppConfigs(context: Context)
       +buildImage(context: Context, imageName: string)
       +buildPackage(context: Context, packageName: string, options: BuildOptions)
       +buildApp(context: Context, appName: string, options: BuildOptions)
@@ -162,11 +167,6 @@ classDiagram
     class PackageRepository {
       -gitRepositoryPath: string
       -isLfsEnabled: boolean
-      +storePackage(package: Package): boolean
-      +retrievePackage(packageId: string): Package
-      +checkConsistency(context: Context): boolean
-      +commitChanges(message: string): boolean
-      +rollbackChanges(): boolean
     }
     class Package {
       -packageFiles: file[]
@@ -202,9 +202,6 @@ classDiagram
     namespace PackageContext {
         class Context {
             -contextDirectory: string
-            +loadPackageConfigs(): PackageConfig[]
-            +loadAppConfigs(): AppConfig[]
-            +loadDockerConfigs(): DockerConfig[]
         }
 
         class PackageConfig {
@@ -221,7 +218,6 @@ classDiagram
             -isDevLib: boolean
             -isDebug: boolean
             -dockerImageNames: string[]
-            +loadFromJson(jsonFile: string): boolean
         }
 
         class AppConfig {
@@ -237,14 +233,11 @@ classDiagram
             -isDevLib: boolean
             -isDebug: boolean
             -dockerImageNames: string[]
-            +loadFromJson(jsonFile: string): boolean
         }
 
         class DockerConfig {
             -imageName: string
             -dockerfilePath: string
-            +buildImage(): DockerImage
-            +getImageName(): string
         }
     }
 

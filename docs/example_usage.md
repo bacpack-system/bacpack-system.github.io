@@ -99,12 +99,13 @@ Configs.
 
 !!! info
     Packages can depend only on different Packages in the same Package Context, but not on Apps.
-    In general, Apps can't form any dependency relationships. The dependency relationships of
-    Packages cannot form a cycle.
+    In general, Apps can't form any dependency relationships.
+    
+    The dependency relationships of Packages cannot form a cycle.
 
-??? example "Config example"
+??? example "`curl` Config example"
     The following Config defines `curl` Package. It defines its dependency on `zlib` Package,
-    the source code repository, name of the Package, the CMake options and the Docker image to
+    the source code repository, name of the Package, the CMake options and the Docker images to
     use. It sets the build type to Release, so it is a release variation of `curl` Package.
 
     ```json
@@ -136,7 +137,44 @@ Configs.
       },
       "DockerMatrix": {
         "ImageNames": [
-          "ubuntu2404"
+          "ubuntu2404",
+          "fedora41"
+        ]
+      }
+    }
+    ```
+
+??? example "`zlib` Config example"
+    The following Config defines `zlib` Package.
+
+    ```json
+    {
+      "Env": {},
+      "Git": {
+        "URI": "https://github.com/madler/zlib.git",
+        "Revision": "v1.2.11"
+      },
+      "Build": {
+        "CMake": {
+          "Defines": {
+            "CMAKE_BUILD_TYPE": "Release"
+          }
+        }
+      },
+      "Package": {
+        "Name": "zlib",
+        "VersionTag": "v1.2.11",
+        "PlatformString": {
+          "Mode": "auto"
+        },
+        "IsLibrary": true,
+        "IsDevLib": true,
+        "IsDebug": false
+      },
+      "DockerMatrix": {
+        "ImageNames": [
+          "ubuntu2404",
+          "fedora41"
         ]
       }
     }
