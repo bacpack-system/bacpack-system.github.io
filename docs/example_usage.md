@@ -1,100 +1,195 @@
 # Example usage
 
-This document demonstrates the use cases defined in [Use Cases](./use_cases.md) using an [example
-project](https://github.com/bacpack-system/example-project) which uses `curl` dependency to print
-a html content of `https://www.example.com` webpage. Below are steps to define a `curl` Package
-and include it in example project.
+The goal of this document is to demonstrate the use cases defined in [Use Cases](./use_cases.md).
+During this tutorial an example CMake based project will be created. This project will use a
+dependency - another CMake based project. The dependency will be built and added to the project
+using BacPack system.
+
+The example project will use `curl` dependency for simply printing a html content of
+`https://www.example.com` webpage. In the following steps, the `curl` Package will be defined and
+built. Then the example project will be created and configured to use the `curl` Package.
+
+## Install dependencies
+
+Install the required dependencies for using BacPack system - docker and cmakelib.
 
 ## Define a Package
 
-The example project uses `curl` as a dependency, which depends on `zlib`. The definition files -
-Configs of these Packages need to be created inside a Package Context. These Packages are defined
-in [this example Package Context](https://github.com/bacpack-system/example-context). The basic
-structure of Package Context and Configs is described below. The complete structure of Package
-Context is described in [Packager documentation](https://github.com/bacpack-system/packager/blob/master/doc).
+The example project uses `curl` as a dependency, which depends on `zlib`. The definition files
+of these Packages (Configs) need to be created inside a Package Context.
 
-### Structure of Package Context
+BacPack system supports building Packages for multiple target platforms. For this the Docker images
+are used. So in order to build the Packages, the Docker image (build environment) must be defined
+and created.
 
-```plaintext
-<context_directory>/
-  docker/
-    <docker_image_name>/
-      Dockerfile
-    ...
-  package/
-    <package_group_name>/
-      <package_config_a>.json
-      <package_config_b>.json
-    ...
-    curl/
-      curl_release.json
-      curl_debug.json
-    zlib/
-      zlib_release.json
-      zlib_debug.json
-  app/
-    <app_group_name>/
-      <app_config_a>.json
-      <app_config_b>.json
-    ...
-```
+The following sections describe how to define Docker images and Packages.
 
-Each Package is built inside a Docker container specified by Dockerfile. All used Dockerfiles are
-defined in a `docker` directory. 
+### Define a Docker image
 
-In the `package`/`app` directory, the Package/App definition files - Configs are present. Each
-Package can have multiple variations, which is why there is a concept of Package group in the
-structure. The `package_group_name` is the actual name of a Package and this directory contains
-the variations of this Package. For example, one variation can be building with Release or Debug
-build types.
+The Packages are built inside a Docker container created from image specified by Dockerfile.
+The image defines a build environment for building Packages. Defined Docker image must comply
+with some [requirements](https://github.com/bacpack-system/packager/blob/master/doc/DockerContainerRequiremetns.md),
+briefly:
 
-### Config structure
+ - CMake must be installed,
+ - SSH must be configured with root login and password `1234`,
+ - and `uname` must be installed.
 
-The release variation Config of `curl` Package is following:
+Additionally all required tools for building supported Packages must be installed (for example
+compilers).
 
-```json
-{
-  "Env": {},
-  "DependsOn": [
-    "zlib"
-  ],
-  "Git": {
-    "URI": "https://github.com/curl/curl.git",
-    "Revision": "curl-7_79_1"
-  },
-  "Build": {
-    "CMake": {
-      "Defines": {
-        "CMAKE_BUILD_TYPE": "Release"
+??? example "Dockerfile example"
+    The following Dockerfile is used for building `curl` and `zlib` Packages for Ubuntu 24.04. It
+    installs all required tools and fulfills all
+    [requirements](https://github.com/bacpack-system/packager/blob/master/doc/DockerContainerRequiremetns.md).
+
+    ```docker
+    FROM ubuntu:24.04
+
+    USER root
+    RUN echo root:1234 | chpasswd
+
+    RUN apt-get update && \
+        DEBIAN_FRONTEND=noninteractive apt-get install -y \
+          	coreutils lsb-release build-essential  openssh-server git libssl-dev wget patchelf && \
+        rm -rf /var/lib/apt/lists/*
+
+    RUN wget "https://github.com/Kitware/CMake/releases/download/v3.30.3/cmake-3.30.3-linux-x86_64.sh" -O cmake.sh && \
+        chmod +x cmake.sh && \
+        ./cmake.sh --skip-license --prefix=/usr/local && \
+        rm ./cmake.sh 
+
+    RUN apt-get purge -y \
+        wget && \
+        rm -rf /var/lib/apt/lists/*
+
+    RUN sed -ri 's/#?PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+    RUN mkdir -p /run/sshd
+
+    ENTRYPOINT ["/usr/sbin/sshd", "-D", "-o", "ListenAddress=0.0.0.0"]
+    ```
+
+### Define a Package Config
+
+Package definition - Config is a JSON file that defines the Package. The Config contains all
+necessary information for building the Package - the source code repository, the Docker image to
+use, the CMake options, etc. The Config structure is described in
+[Packager documentation](https://github.com/bacpack-system/packager/blob/master/doc/ConfigStructure.md).
+
+Some of the important fields of Config are:
+
+ - `DependsOn` - list of dependency Packages, all Packages in the list must be defined in the same Package Context
+ - `Git/URI` - URI to a CMake based git repository with source code of the Package
+ - `Git/Revision` - tag or branch to use for build
+ - `Build/CMake/Defines` - CMake options
+ - `Package/Name` - name of the Package
+ - `DockerMatrix/ImageNames` - list of Docker images to build the Package for
+
+Each Package can have multiple variations, which are defined by different Configs. The variations
+can be for example different build types (Release, Debug), different versions, different target
+architectures (x86, x64), etc. All variations are part of a so-called Package group. The Package
+group is a directory containing all variations of the Package. The name of the Package group must
+be equal to the name of the Package (`Package/Name` field in Config). The name of the Config file
+is the name of the variation.
+
+There are also 2 types of Configs - Package Configs and App Configs. The only difference between
+Packages and Apps is that Apps do not support dependencies managed by the BacPack system. Therefore,
+App Configs do not have a `DependsOn` field. All other fields are the same for both Package and App
+Configs.
+
+!!! info
+    Packages can depend only on different Packages in the same Package Context, but not on Apps.
+    In general, Apps can't form any dependency relationships. The dependency relationships of
+    Packages cannot form a cycle.
+
+??? example "Config example"
+    The following Config defines `curl` Package. It defines its dependency on `zlib` Package,
+    the source code repository, name of the Package, the CMake options and the Docker image to
+    use. It sets the build type to Release, so it is a release variation of `curl` Package.
+
+    ```json
+    {
+      "Env": {},
+      "DependsOn": [
+        "zlib"
+      ],
+      "Git": {
+        "URI": "https://github.com/curl/curl.git",
+        "Revision": "curl-7_79_1"
+      },
+      "Build": {
+        "CMake": {
+          "Defines": {
+            "CMAKE_BUILD_TYPE": "Release"
+          }
+        }
+      },
+      "Package": {
+        "Name": "curl",
+        "VersionTag": "v7.79.1",
+        "PlatformString": {
+          "Mode": "auto"
+        },
+        "IsLibrary": true,
+        "IsDevLib": true,
+        "IsDebug": false
+      },
+      "DockerMatrix": {
+        "ImageNames": [
+          "ubuntu2404"
+        ]
       }
     }
-  },
-  "Package": {
-    "Name": "curl",
-    "VersionTag": "v7.79.1",
-    "PlatformString": {
-      "Mode": "auto"
-    },
-    "IsLibrary": true,
-    "IsDevLib": true,
-    "IsDebug": false
-  },
-  "DockerMatrix": {
-    "ImageNames": [
-      "ubuntu2404",
-      "fedora41"
-    ]
-  }
-}
-```
+    ```
 
-All fields of Config are described in Packager documentation. Only important fields for the
-purpose of this example will be described further. The `DependsOn` field contains all dependency
-Packages which must be defined in the same Package Context. The `Git/URI` must be a URI to a CMake
-based git repository with tag specified by `Git/Revision`. In `Build/CMake/Defines`, all CMake
-options can be specified. The `Package/Name` field must be the same as the name of
-`package_group_name`. All images in `DockerMatrix/ImageNames` must be defined in the `docker`
-directory of the same Package Context.
+### Package Context
+
+The Package Context is a structure that contains all necessary information for building Packages
+and Apps. It contains definitions of Docker images, Packages and Apps in a [strict directory
+structure](https://github.com/bacpack-system/packager/blob/master/doc/ContextStructure.md). The
+Packages and Apps must use only Docker images defined in the same Package Context.
+
+The Package Context has following mandatory subdirectories:
+
+ - package - contains Package definitions
+ - app - contains App definitions
+ - docker - contains Docker image definitions - Dockerfiles
+
+The [example Package Context](https://github.com/bacpack-system/example-context)
+contains complete Package Context for this tutorial with all `curl` and `zlib` Configs and
+`ubuntu2404` and `fedora41` Dockerfiles.
+
+??? example "Package Context directory structure"
+
+    The following text shows the directory structure of the Package Context. The `package`, `app`
+    and `docker` directories are mandatory. The `<package_group_name>` and `<app_group_name>` refer
+    to Package group described in previous section. The `...` means that the directory can contain
+    more files, but they are not relevant for the purpose of this example. The structure also shows
+    the right place for `curl` and `zlib` Packages.
+
+    ```plaintext
+    <context_directory>
+    ├── docker
+    │   └── <docker_image_name>
+    │       └── Dockerfile
+    │       ...
+    ├── app
+    │   └── <app_group_name>
+    │       ├── app_config_a.json
+    │       └── app_config_b.json
+    │       ...
+    └── package
+        ├── <package_group_name>
+        │   ├── package_config_a.json
+        │   └── package_config_b.json
+        ├── curl
+        │   ├── curl_debug.json
+        │   └── curl_release.json
+        └── zlib
+            ├── zlib_debug.json
+            └── zlib_release.json
+            ...
+    ```
 
 ## Package build
 
@@ -143,7 +238,7 @@ bap-builder build-package --context /path/to/package/context --image-name ubuntu
 This command builds a Package `curl` defined in Context for `ubuntu2404` image, creates an archive
 of this Package and copies it to the output-dir (Package Repository). The command with
 `--build-deps` flag also builds all dependencies of the given Package. In this case it also builds
-the `bzip` Package. Other flags and settings of Packager are described in its
+the `zlib` Package. Other flags and settings of Packager are described in its
 [documentation](https://github.com/bacpack-system/packager/tree/master/doc).
 
 The `curl` Package can now be used as a dependency for projects.
