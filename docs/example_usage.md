@@ -1,10 +1,10 @@
 # Example usage
 
-The goal of this document is to demonstrate the use cases defined in [Use Cases](./use_cases.md).
-During this tutorial an example CMake based project will be created. This project will use a
-dependency - another CMake based project. The dependency will be built and added to the project
-using BacPack system. Finally the newly created project will be added to BacPack system as an App
-and built.
+The goal of this document is to demonstrate some of the use cases defined in
+[Use Cases](./use_cases.md). During this tutorial an example CMake based project will be created.
+This project will use a dependency - another CMake based project. The dependency will be built and
+added to the project using BacPack system. Finally the newly created project will be added to
+BacPack system as an App and built.
 
 The example project will use `curl` dependency for simply printing a html content of
 `https://www.example.com` webpage. In the following steps, the `curl` Package will be defined and

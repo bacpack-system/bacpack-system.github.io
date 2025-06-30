@@ -1,10 +1,13 @@
 # Use cases
 
-This document describes several use cases for the BacPack System. All these use cases are described
-further in [Usage](./example_usage.md).
+This document describes several use cases for the BacPack System. Some of these use cases are
+described further in [Usage](./example_usage.md).
 
-The following sequence diagram illustrates data flow and interactions between user and BacPack
-components for listed use cases.
+## Add Package to Package Context
+
+After adding a Package Config to Package Context, the Package can be built by Packager and hosted
+in a Package Repository. The Package can then be easily added to projects by including it in
+CMakeLists.
 
 ```mermaid
 sequenceDiagram
@@ -15,39 +18,100 @@ sequenceDiagram
   participant Package Tracker
   participant Project
 
-  rect
-    Note right of User: Use case:<br/> Add Package to Context
-    User->>Package Context: Creates Package definition
-    User->>Packager: Initiates a Package build
-    rect
-      Note right of Packager: Packager builds Package
-      Package Context->>Packager: Takes the Package definition
-      Packager->>Package Repository: Puts built Package
-    end
-  end
-  rect
-    Note right of User: Use case:<br/> Use Package in project
-    User->>Project: Puts link of Package Tracker
-    User->>Project: Adds desired Package to CMakeLists
-    User->>Project: Initiates Project build
-    rect
-      Note right of Package Repository: Project build
-      Project->>Package Tracker: Asks for desired Package
-      Package Repository->>Package Tracker: Takes present Package
-      Package Tracker->>Project: Adds Package to build
-      Project->>Project: Project build
-    end
+  User->>Package Context: Adds Package definition
+```
+
+## Update Package in Package Context
+
+Updating a Package means changing the Package Config in Package Context and then rebuilding the
+Package. Changing the version tag also requires removing the old version Package from the
+Package Repository before building the new version.
+
+```mermaid
+sequenceDiagram
+  actor User
+  participant Packager
+  participant Package Repository
+  participant Package Context
+  participant Package Tracker
+  participant Project
+
+  User->>Package Context: Updates Package definition
+  opt if version tag changed
+    User->>Package Repository: Remove old Package
   end
 ```
 
-## Add Package to Package Context
+## Remove Package from Package Context
 
-After adding a Package Config to Package Context, the Package can be built by Packager and hosted
-in a Package Repository. The Package can then be easily added to projects by including it in
-CMakeLists.
+Removing a Package from Package Context means removing the Package Config from Package Context
+and then removing the Package from the Package Repository.
 
-## Use already built Packages in my CMake based project
+```mermaid
+sequenceDiagram
+  actor User
+  participant Packager
+  participant Package Repository
+  participant Package Context
+  participant Package Tracker
+  participant Project
+
+  User->>Package Context: Remove Package definition
+  User->>Package Repository: Remove Package
+```
+
+## Build a Package from Package Context
+
+The Packager is used to build Packages/Apps from Package Context. The built Packages are then
+uploaded to a Package Repository. The Packages in Package Context form a dependency trees, therefore
+Packager supports several ways how to build the Packages:
+ - build single Package
+ - build single Package with its dependencies
+ - build all Packages which depends on a Package
+ - build all Packages in Package Context
+
+These use cases are described in detail in
+[Packager documentation](https://github.com/bacpack-system/packager/blob/master/doc/UseCaseScenarios.md).
+
+```mermaid
+sequenceDiagram
+  actor User
+  participant Packager
+  participant Package Repository
+  participant Package Context
+  participant Package Tracker
+  participant Project
+
+  User->>Packager: Initiates Package build
+  Package Context->>Packager: Retrieves Package definitions
+  Packager->>Packager: Package build
+  Packager->>Package Repository: Uploads built Packages
+```
+
+## Use already built Packages in CMake based project
 
 To use a Package that was built with Packager and uploaded to a Package Repository, use Package
 Tracker macros to add this Package to the application. The Package Tracker repository URL must also
 be set in `CMLibStorage.cmake` in the root directory of the application.
+
+```mermaid
+sequenceDiagram
+  actor User
+  participant Packager
+  participant Package Repository
+  participant Package Context
+  participant Package Tracker
+  participant Project
+
+  User->>Project: Puts link of Package Tracker
+  User->>Project: Adds desired Package to CMakeLists
+  User->>Project: Initiates Project build
+  rect
+    Note right of Package Repository: Project build
+    Project->>Package Tracker: Asks for Packages
+    Package Repository->>Package Tracker: Retrieves Packages
+    Package Tracker->>Project: Adds Packages to build
+    Project->>Project: FIND_PACKAGE<br>for each Package
+    Project->>Project: Project build
+  end
+```
