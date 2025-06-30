@@ -273,7 +273,11 @@ image for Package and `output-dir` points to the Package Repository.
 The command for building `curl` Package is:
 
 ```bash
-bap-builder build-package --context /path/to/package/context --image-name ubuntu2404 --output-dir /path/to/package/repository --name curl --build-deps
+bap-builder build-package \
+            --context /path/to/package/context \
+            --image-name ubuntu2404 \
+            --output-dir /path/to/package/repository \
+            --name curl --build-deps
 ```
 
 This command builds a Package `curl` defined in Context for `ubuntu2404` image, creates an archive
@@ -430,7 +434,11 @@ Now the App can be added to a Package Context.
 This App can be built using Packager with following command:
 
 ```bash
-bap-builder build-app --context /path/to/package/context --image-name fedora41 --output-dir /path/to/package/repository --name example-project
+bap-builder build-app \
+            --context /path/to/package/context \
+            --image-name fedora41 \
+            --output-dir /path/to/package/repository \
+            --name example-project
 ```
 
 Now this example project is packaged with all its dependencies and can be used as a standalone
