@@ -8,19 +8,26 @@ package management of CMake based projects.
 
 The main components of BacPack system:
 
- - [packager](https://github.com/bacpack-system/packager)
- - [package-tracker](https://github.com/bacpack-system/package-tracker)
+ - [**Packager**](https://github.com/bacpack-system/packager) - CLI tool that tracks dependencies and
+ builds Packages
+
+ - [**Package Tracker**](https://github.com/bacpack-system/package-tracker) - tool that downloads
+ previously built dependencies for use in CMake based projects
 
 ## Project specific components
 
-Packager and Package Tracker also interact with other components, which are use case specific and
-must be created for each project. These components are listed below
+To use BacPack system, these additional components must be set up that are specific to each project
+or organization:
 
- - Package Repository ([BA example](https://gitea.bringauto.com/fleet-protocol/package-repository))
- - Package Context ([BA example](https://github.com/bringauto/packager-fleet-protocol-context))
+ - **Package Repository** ([example](https://gitea.bringauto.com/fleet-protocol/package-repository)) -
+  A Git repository where built Packages are stored and distributed
 
-The location of these components is use case specific, but BringAuto mainly uses given links for
-these components.
+ - **Package Context** ([example](https://github.com/bringauto/packager-fleet-protocol-context)) -
+ A directory structure containing configuration files that define how to build Packages, including
+ build settings and Docker environments.
+
+These components are customized for each project's specific needs - different projects will have
+different Packages to build and different build requirements.
 
 ## External tools
 
