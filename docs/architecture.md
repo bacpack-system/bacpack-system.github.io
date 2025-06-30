@@ -268,3 +268,49 @@ classDiagram
 
 Dependency tracking library for CMake. It defines macros for dependency tracking and features
 caching for efficient use and building of dependencies.
+
+The links between cmakelib and other components are shown on next diagram.
+
+```mermaid
+---
+  config:
+    class:
+      hideEmptyMembersBox: true
+---
+classDiagram
+    class cmakelib
+    class CMLibStorage {
+        -storageUris: string[]
+    }
+    class PackageTracker
+
+    %% PackageTracker uses CMLibStorage (Association)
+    PackageTracker --> cmakelib : uses
+
+    %% CMLibStorage uses cmakelib (Association)
+    cmakelib *-- CMLibStorage : is component of
+```
+
+The interactions between cmakelib and other components when building a project are shown on next diagram.
+
+```mermaid
+sequenceDiagram
+  actor User
+  participant Project
+  participant cmakelib
+  participant CMLibStorage
+  participant Package Tracker
+
+  User->>Project: Initiates Project<br>configuration
+  Project->>cmakelib: Includes cmakelib with<br>STORAGE component
+  cmakelib->>CMLibStorage: Asks for storage<br>initialization
+  Package Tracker->>CMLibStorage: Retrieves Package<br>Tracker
+  CMLibStorage->>CMLibStorage: Package<br>Tracker initialization
+  CMLibStorage->>cmakelib: Package Tracker<br>initialized
+  cmakelib->>Project: Package Tracker<br>initialized
+  Project->>Package Tracker: Asks for Packages
+  Package Tracker->>Project: Retrieves Packages
+  Project->>Project: FIND_PACKAGE<br>for each Package
+  User->>Project: Initiates Project<br>build
+  Project->>Project: Build with dependencies
+```

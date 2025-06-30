@@ -307,6 +307,13 @@ SET(STORAGE_LIST DEP)
 SET(STORAGE_LIST_DEP "https://github.com/bacpack-system/package-tracker.git")
 ```
 
+!!! info
+
+    The `CMLibStorage.cmake` file is a part of STORAGE component of cmakelib. So this component
+    must be enabled with cmakelib. The `STORAGE_LIST` variable defines the list of storages and
+    `STORAGE_LIST_<STORAGE>` defines the URL for each storage. In this case the Package Tracker
+    is used.
+
 This links the project with Package Tracker specific for BringAuto, which enables adding Packages
 from BringAuto's specific Package Repository (The Package Tracker points to Package Repository).
 Usually the previously built Packages would be used, but for simplicity, the same Packages from
@@ -365,11 +372,10 @@ cmake ..
 make -j 8
 ```
 
-## Add built project to a Package Context as an App
+## Create an App from project
 
-The project was built using dependencies managed by BacPack system. Now the built project may be
-added to a Package Context as an App, which can then be built and distributed in the same way as
-Packages.
+The project with dependencies was built in previous step. Now the built project may be added to a
+Package Context as an App, which can then be built and distributed in the same way as Packages.
 
 ### Modify CMakeLists
 
@@ -378,19 +384,17 @@ built in a way that it has all its dependencies packaged with it. To achieve thi
 `CMakeLists.txt` of the project must be modified to use macros for installing like this:
 
 ```cmake
-IF(BRINGAUTO_INSTALL)
-    # Install created target
-    CMDEF_INSTALL(TARGET example-project)
+  # Install created target
+  CMDEF_INSTALL(TARGET example-project)
 
-    # Install all shared library dependencies needed for json_target
-    # and update RUNPATH.
-    BA_PACKAGE_DEPS_IMPORTED(example-project)
-ENDIF()
+  # Install all shared library dependencies needed for json_target
+  # and update RUNPATH.
+  BA_PACKAGE_DEPS_IMPORTED(example-project)
 ```
 
-If the `BRINGAUTO_INSTALL` option is set, the example-project target and its dependencies are
-installed and the RUNPATH is updated. When building with Packager, the files will be installed to
-Docker container and then they will be extracted and packaged into an App archive.  
+With this code, the example-project target and its dependencies are installed and the RUNPATH is
+updated. When building with Packager, the files will be installed inside a Docker container and then
+they will be extracted and packaged into an App archive.  
 
 ### Add App Config to Package Context
 
@@ -398,9 +402,8 @@ Now the App can be added to a Package Context.
 
 ??? example "example App Config"
     Following JSON is the Release variation App Config for the example project. The Config is
-    very similar to previously defined Package Configs in this example. The most important change
-    is to set `BRINGAUTO_INSTALL` option to use new code in CMakeLists. The other changes are to
-    Git URI and Package name to reflect this example project.
+    very similar to previously defined Package Configs in this example. The only important changes
+    are to Git URI and Package name to reflect this example project.
 
     ```json
     {
@@ -412,8 +415,7 @@ Now the App can be added to a Package Context.
       "Build": {
         "CMake": {
           "Defines": {
-            "CMAKE_BUILD_TYPE": "Release",
-            "BRINGAUTO_INSTALL": "ON"
+            "CMAKE_BUILD_TYPE": "Release"
           }
         }
       },
