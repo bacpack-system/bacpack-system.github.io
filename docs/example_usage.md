@@ -3,7 +3,8 @@
 The goal of this document is to demonstrate the use cases defined in [Use Cases](./use_cases.md).
 During this tutorial an example CMake based project will be created. This project will use a
 dependency - another CMake based project. The dependency will be built and added to the project
-using BacPack system.
+using BacPack system. Finally the newly created project will be added to BacPack system as an App
+and built.
 
 The example project will use `curl` dependency for simply printing a html content of
 `https://www.example.com` webpage. In the following steps, the `curl` Package will be defined and
@@ -237,13 +238,15 @@ must be created. Finally the `curl` Package can be build.
 ### Build Docker image
 
 If the used image is not built on the system, it must be built with the `build-image` Packager command.
-The command for building `ubuntu2404` image is:
+Following command builds a Docker image based on Dockerfile in given Package Context.
 
 ```bash
 bap-builder build-image --context /path/to/package/context --image-name ubuntu2404
 ```
 
 ### Create a Package Repository
+
+A Package Repository is a storage for Packages built by Packager. It must be a git repository.
 
 For the purpose of this example, a local Package Repository will be used, but usually the Package
 Repository is present upstream and cloned locally.
@@ -308,21 +311,24 @@ Packages defined in [example Package Context](https://github.com/bacpack-system/
 
 !!! info
 
-    The local Package Repository can't be easily used, because currently the BacPack system does
-    not support it. That is why the upstream Package Repository is used. The usage of local Package
-    Repository will be added in future releases.
+    The local Package Repository can't be easily used, because currently the BacPack system
+    supports only upstream Package Repositories. The usage of local Package Repository will be
+    added in future releases.
 
 ### Configure CMakeLists
 
-The dependencies must be defined in `cmake/Dependencies.cmake` like this:
+The dependencies are defined by following CMake code:
 
 ```cmake
 BA_PACKAGE_LIBRARY(curl v7.79.1)
 BA_PACKAGE_LIBRARY(zlib v1.2.11 OUTPUT_PATH_VAR ZLIB_ROOT)
 ```
 
-This file must be included in the project's CMakeLists.txt and then the Package can be included
-with `FIND_PACKAGE`. First, cmakelib with required components must be added. Example CMake code:
+In the example project, this code is present in `cmake/Dependencies.cmake`, which is included in
+the project's `CMakeLists.txt`.
+
+Then the Package can be included with `FIND_PACKAGE`. First, cmakelib with required components must
+be added. Example CMake code:
 
 ```cmake
 # Including 'cmake/Dependencies.cmake' file
@@ -347,4 +353,85 @@ FIND_PACKAGE(CURL REQUIRED)
 
 ### Build a project
 
-At this point, the project can be built with `cmake` in the usual way.
+At this point, the project can be built with `cmake` in the usual way:
+
+```bash
+mkdir -p _build && cd _build
+cmake ..
+make -j 8
+```
+
+## Add built project to a Package Context as an App (Bonus)
+
+The project was built using dependencies managed by BacPack system. Now the built project may be
+added to a Package Context as an App, which can then be built and distributed in the same way as
+Packages.
+
+As previously mentioned, the Apps can't have any dependencies. So the example project must be
+built in a way that it has all its dependencies packaged with it. To achieve this, the
+`CMakeLists.txt` of the project must be modified to use macros for installing like this:
+
+```cmake
+IF(BRINGAUTO_INSTALL)
+    # Install created target
+    CMDEF_INSTALL(TARGET example-project)
+
+    # Install all shared library dependencies needed for json_target
+    # and update RUNPATH.
+    BA_PACKAGE_DEPS_IMPORTED(example-project)
+ENDIF()
+```
+
+If the `BRINGAUTO_INSTALL` option is set, the example-project target and its dependencies are
+installed and the RUNPATH is updated. When building with Packager, the files will be installed to
+Docker container and then they will be extracted and packaged into an App archive.  
+
+Now the App can be added to a Package Context.
+
+??? example "example App Config"
+    Following JSON is the Release variation App Config for the example project. The Config is
+    very similar to previously defined Package Configs in this example. The most important change
+    is to set `BRINGAUTO_INSTALL` option to use new code in CMakeLists. The other changes are to
+    Git URI and Package name to reflect this example project.
+
+    ```json
+    {
+      "Env": {},
+      "Git": {
+        "URI": "https://github.com/bacpack-system/example-project.git",
+        "Revision": "v1.0.0"
+      },
+      "Build": {
+        "CMake": {
+          "Defines": {
+            "CMAKE_BUILD_TYPE": "Release",
+            "BRINGAUTO_INSTALL": "ON"
+          }
+        }
+      },
+      "Package": {
+        "Name": "example-project",
+        "VersionTag": "v1.0.0",
+        "PlatformString": {
+          "Mode": "auto"
+        },
+        "IsLibrary": false,
+        "IsDevLib": false,
+        "IsDebug": false
+      },
+      "DockerMatrix": {
+        "ImageNames": [
+          "fedora41"
+        ]
+      }
+    }
+    ```
+
+This App can be built using Packager with following command:
+
+```bash
+bap-builder build-app --context /path/to/package/context --image-name fedora41 --output-dir /path/to/package/repository --name example-project
+```
+
+Now this example project is packaged with all its dependencies and can be used as a standalone
+application.
