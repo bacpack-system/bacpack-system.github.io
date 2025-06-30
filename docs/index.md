@@ -19,12 +19,10 @@ The main components of BacPack system:
 To use BacPack system, these additional components must be set up that are specific to each project
 or organization:
 
- - **Package Repository** ([example](https://gitea.bringauto.com/fleet-protocol/package-repository)) -
-  A Git repository where built Packages are stored and distributed
+ - **Package Repository** - A Git repository where built Packages are stored and distributed
 
- - **Package Context** ([example](https://github.com/bringauto/packager-fleet-protocol-context)) -
- A directory structure containing configuration files that define how to build Packages, including
- build settings and Docker environments.
+ - **Package Context** - A directory structure containing configuration files that define how to
+ build Packages, including build settings and Docker environments.
 
 These components are customized for each project's specific needs - different projects will have
 different Packages to build and different build requirements.
