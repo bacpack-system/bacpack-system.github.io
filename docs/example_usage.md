@@ -365,11 +365,13 @@ cmake ..
 make -j 8
 ```
 
-## Add built project to a Package Context as an App (Bonus)
+## Add built project to a Package Context as an App
 
 The project was built using dependencies managed by BacPack system. Now the built project may be
 added to a Package Context as an App, which can then be built and distributed in the same way as
 Packages.
+
+### Modify CMakeLists
 
 As previously mentioned, the Apps can't have any dependencies. So the example project must be
 built in a way that it has all its dependencies packaged with it. To achieve this, the
@@ -389,6 +391,8 @@ ENDIF()
 If the `BRINGAUTO_INSTALL` option is set, the example-project target and its dependencies are
 installed and the RUNPATH is updated. When building with Packager, the files will be installed to
 Docker container and then they will be extracted and packaged into an App archive.  
+
+### Add App Config to Package Context
 
 Now the App can be added to a Package Context.
 
@@ -431,6 +435,8 @@ Now the App can be added to a Package Context.
     }
     ```
 
+### Build the App
+
 This App can be built using Packager with following command:
 
 ```bash
@@ -441,5 +447,29 @@ bap-builder build-app \
             --name example-project
 ```
 
-Now this example project is packaged with all its dependencies and can be used as a standalone
-application.
+After this command, the Packager creates a zip archive of the App. If it is extracted, the directory
+structure looks like this:
+
+```plainttext
+example-project_v1.0.0_x86-64-fedora-41
+├── bin
+│   └── example-project
+└── lib
+    ├── cmake
+    │   ├── example-project.cmake
+    │   └── example-project-release.cmake
+    ├── libcrypto.so -> libcrypto.so.3.2.4
+    ├── libcrypto.so.3 -> libcrypto.so.3.2.4
+    ├── libcrypto.so.3.2.4
+    ├── libcurl.so
+    ├── libssl.so -> libssl.so.3.2.4
+    ├── libssl.so.3 -> libssl.so.3.2.4
+    ├── libssl.so.3.2.4
+    ├── libz.so
+    ├── libz.so.1
+    └── libz.so.1.2.11
+```
+
+As can be seen, the extracted structure contains the `example-project` binary in `bin` directory
+and all its dependencies in `lib` directory. Now the App can be easily extracted to a system based
+on fedora41 image.
