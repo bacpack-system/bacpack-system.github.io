@@ -12,7 +12,78 @@ built. Then the example project will be created and configured to use the `curl`
 
 ## Install dependencies
 
-Install the required dependencies for using BacPack system - docker and cmakelib.
+Install the required dependencies for using BacPack system - [docker](https://www.docker.com/) and
+[cmakelib](https://github.com/cmakelib/cmakelib).
+
+### Install Packager
+
+Packager is a tool for building Packages and Apps. It must be built from source. The build
+instructions are in the [Packager repository](https://github.com/bacpack-system/packager). The name
+of the built binary is `bap-builder`, which is used in [Build a Package](#build-a-package) section.
+
+## Create a Package Context
+
+The Package Context is a structure that contains all necessary information for building Packages
+and Apps. It contains definitions of Docker images, Packages and Apps in a [strict directory
+structure](https://github.com/bacpack-system/packager/blob/master/doc/ContextStructure.md). The
+Packages and Apps must use only Docker images defined in the same Package Context.
+
+The Package Context has following mandatory subdirectories:
+
+ - package - contains Package definitions
+ - app - contains App definitions
+ - docker - contains Docker image definitions - Dockerfiles
+
+To track changes in Package Context, it is recommended to create a git repository for it. The
+command for creating a Package Context as a git repository is:
+
+```bash
+mkdir context && cd context && mkdir docker package app && git init
+```
+
+The [example Package Context](https://github.com/bacpack-system/example-context)
+contains complete Package Context for this tutorial with all `curl` and `zlib` Configs,
+`example-project` app and `ubuntu2404` and `fedora41` Dockerfiles.
+
+??? example "Package Context directory structure"
+
+    The following text shows the directory structure of the Package Context after all steps in
+    this tutorial. The `package`, `app` and `docker` directories are mandatory. The
+    `<package_group_name>` and `<app_group_name>` refers to Package group described in next
+    section. The `...` means that the directory can contain more files, but they are not relevant
+    for the purpose of this example. The structure also shows the right place for `curl` and
+    `zlib` Packages.
+
+    ```plaintext
+    <context_directory>
+    ├── docker
+    │   ├── <docker_image_name>
+    │   │   └── Dockerfile
+    │   ├── ubuntu2404
+    │   │   └── Dockerfile
+    │   └── fedora41
+    │       └── Dockerfile
+    │       ...
+    ├── app
+    │   ├── <app_group_name>
+    │   │   ├── app_config_a.json
+    │   │   └── app_config_b.json
+    │   └── example-project
+    │       ├── example_project_debug.json
+    │       └── example_project_release.json
+    │       ...
+    └── package
+        ├── <package_group_name>
+        │   ├── package_config_a.json
+        │   └── package_config_b.json
+        ├── curl
+        │   ├── curl_debug.json
+        │   └── curl_release.json
+        └── zlib
+            ├── zlib_debug.json
+            └── zlib_release.json
+            ...
+    ```
 
 ## Define a Package
 
@@ -39,35 +110,49 @@ briefly:
 Additionally all required tools for building supported Packages must be installed (for example
 compilers).
 
+All defined Docker images must be placed in the `docker` directory of the Package Context. In this
+directory, each Docker image is defined in its own directory. The name of this directory is the
+name of the Docker image (see [Create a Package Context](#create-a-package-context)). This name is
+used in the Package Configs to specify the Docker image to use for building the Package. The
+Dockerfile must be named `Dockerfile`.
+
 ??? example "Dockerfile example"
-    The following Dockerfile is used for building `curl` and `zlib` Packages for Ubuntu 24.04. It
+    The following Dockerfile is used for building `curl` and `zlib` Packages for Fedora 41. It
     installs all required tools and fulfills all
     [requirements](https://github.com/bacpack-system/packager/blob/master/doc/DockerContainerRequiremetns.md).
+    The path to this Dockerfile is `context/docker/fedora41/Dockerfile`. The `fedora41` is the
+    name of the Docker image and is used in the Package Configs.
 
     ```docker
-    FROM ubuntu:24.04
+    FROM fedora:41
 
     USER root
     RUN echo root:1234 | chpasswd
 
-    RUN apt-get update && \
-        DEBIAN_FRONTEND=noninteractive apt-get install -y \
-          	coreutils lsb-release build-essential  openssh-server git libssl-dev wget patchelf && \
-        rm -rf /var/lib/apt/lists/*
+    RUN dnf -y update && \
+        dnf -y install  \
+        automake binutils gcc gcc-c++ git kernel-devel lsb-release make openssh-server openssl-devel patchelf wget \
+        && dnf clean all
 
     RUN wget "https://github.com/Kitware/CMake/releases/download/v3.30.3/cmake-3.30.3-linux-x86_64.sh" -O cmake.sh && \
         chmod +x cmake.sh && \
         ./cmake.sh --skip-license --prefix=/usr/local && \
-        rm ./cmake.sh 
+        rm ./cmake.sh
 
-    RUN apt-get purge -y \
-        wget && \
-        rm -rf /var/lib/apt/lists/*
+    RUN dnf -y update && \
+        dnf -y remove \
+          wget
+
+    RUN git clone https://github.com/cmakelib/cmakelib.git /cmakelib
+    RUN echo "export CMLIB_DIR=/cmakelib" >> /root/.bashrc
 
     RUN sed -ri 's/#?PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
     RUN mkdir -p /run/sshd
 
+    RUN ssh-keygen -A
+
     ENTRYPOINT ["/usr/sbin/sshd", "-D", "-o", "ListenAddress=0.0.0.0"]
+
     ```
 
 ### Define a Package Config
@@ -107,7 +192,8 @@ Configs.
 ??? example "`curl` Config example"
     The following Config defines `curl` Package. It defines its dependency on `zlib` Package,
     the source code repository, name of the Package, the CMake options and the Docker images to
-    use. It sets the build type to Release, so it is a release variation of `curl` Package.
+    use. It sets the build type to Release and `IsDebug` to false, so it is a release variation of
+    `curl` Package. The path to this Config is `context/package/curl/curl_release.json`.
 
     ```json
     {
@@ -146,7 +232,8 @@ Configs.
     ```
 
 ??? example "`zlib` Config example"
-    The following Config defines `zlib` Package.
+    The following Config defines release variation of `zlib` Package. The path to this Config is
+    `context/package/zlib/zlib_release.json`.
 
     ```json
     {
@@ -181,55 +268,6 @@ Configs.
     }
     ```
 
-### Package Context
-
-The Package Context is a structure that contains all necessary information for building Packages
-and Apps. It contains definitions of Docker images, Packages and Apps in a [strict directory
-structure](https://github.com/bacpack-system/packager/blob/master/doc/ContextStructure.md). The
-Packages and Apps must use only Docker images defined in the same Package Context.
-
-The Package Context has following mandatory subdirectories:
-
- - package - contains Package definitions
- - app - contains App definitions
- - docker - contains Docker image definitions - Dockerfiles
-
-The [example Package Context](https://github.com/bacpack-system/example-context)
-contains complete Package Context for this tutorial with all `curl` and `zlib` Configs and
-`ubuntu2404` and `fedora41` Dockerfiles.
-
-??? example "Package Context directory structure"
-
-    The following text shows the directory structure of the Package Context. The `package`, `app`
-    and `docker` directories are mandatory. The `<package_group_name>` and `<app_group_name>` refer
-    to Package group described in previous section. The `...` means that the directory can contain
-    more files, but they are not relevant for the purpose of this example. The structure also shows
-    the right place for `curl` and `zlib` Packages.
-
-    ```plaintext
-    <context_directory>
-    ├── docker
-    │   └── <docker_image_name>
-    │       └── Dockerfile
-    │       ...
-    ├── app
-    │   └── <app_group_name>
-    │       ├── app_config_a.json
-    │       └── app_config_b.json
-    │       ...
-    └── package
-        ├── <package_group_name>
-        │   ├── package_config_a.json
-        │   └── package_config_b.json
-        ├── curl
-        │   ├── curl_debug.json
-        │   └── curl_release.json
-        └── zlib
-            ├── zlib_debug.json
-            └── zlib_release.json
-            ...
-    ```
-
 ## Package build
 
 Firstly, the target Docker image must be build. Then if not already created, the Package Repository
@@ -241,7 +279,9 @@ If the used image is not built on the system, it must be built with the `build-i
 Following command builds a Docker image based on Dockerfile in given Package Context.
 
 ```bash
-bap-builder build-image --context /path/to/package/context --image-name ubuntu2404
+bap-builder build-image \
+            --context context \
+            --image-name fedora41
 ```
 
 ### Create a Package Repository
@@ -255,8 +295,7 @@ The creation of Package Repository is basically creating an empty git repository
 commands will create it in the current directory:
 
 ```bash
-mkdir package_repository && cd package_repository
-git init
+mkdir package_repo && cd package_repo && git init
 ```
 
 ### Build a Package
@@ -274,13 +313,13 @@ The command for building `curl` Package is:
 
 ```bash
 bap-builder build-package \
-            --context /path/to/package/context \
-            --image-name ubuntu2404 \
-            --output-dir /path/to/package/repository \
+            --context context \
+            --image-name fedora41 \
+            --output-dir package_repo \
             --name curl --build-deps
 ```
 
-This command builds a Package `curl` defined in Context for `ubuntu2404` image, creates an archive
+This command builds a Package `curl` defined in Context for `fedora41` image, creates an archive
 of this Package and copies it to the output-dir (Package Repository). The command with
 `--build-deps` flag also builds all dependencies of the given Package. In this case it also builds
 the `zlib` Package. Other flags and settings of Packager are described in its
@@ -322,9 +361,9 @@ Packages defined in [example Package Context](https://github.com/bacpack-system/
 
 !!! info
 
-    The local Package Repository can't be easily used, because currently the BacPack system
-    supports only upstream Package Repositories. The usage of local Package Repository will be
-    added in future releases.
+    The local Package Repository can't be easily used when building a project, because currently
+    the BacPack system supports only upstream Package Repositories. The usage of local Package
+    Repository will be added in future releases.
 
 ### Configure CMakeLists
 
@@ -443,9 +482,9 @@ This App can be built using Packager with following command:
 
 ```bash
 bap-builder build-app \
-            --context /path/to/package/context \
+            --context context \
             --image-name fedora41 \
-            --output-dir /path/to/package/repository \
+            --output-dir package_repo \
             --name example-project
 ```
 

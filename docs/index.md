@@ -29,5 +29,5 @@ different Packages to build and different build requirements.
 
 ## External tools
 
- - docker
+ - [docker](https://www.docker.com/)
  - [cmakelib](https://github.com/cmakelib/cmakelib)
