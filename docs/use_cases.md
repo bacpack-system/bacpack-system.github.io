@@ -3,7 +3,13 @@
 This document describes several use cases for the BacPack System. Some of these use cases are
 described further in [Usage](./example_usage.md).
 
-## Add Package to Package Context
+## Package Context Management
+
+This section describes use cases related to managing a Package Context. After adding and updating
+a Package, the Package should be built, which is described in [Build a Package from Package
+Context](#build-a-package-from-package-context) use case.
+
+### Add Package
 
 After adding a Package Config to Package Context, the Package can be built by Packager and hosted
 in a Package Repository. The Package can then be easily added to projects by including it in
@@ -19,9 +25,10 @@ sequenceDiagram
   participant Project
 
   User->>Package Context: Adds Package definition
+  User->>Packager: Build Package
 ```
 
-## Update Package in Package Context
+### Update Package
 
 Updating a Package means changing the Package Config in Package Context and then rebuilding the
 Package. Changing the version tag also requires removing the old version Package from the
@@ -40,9 +47,10 @@ sequenceDiagram
   opt if version tag changed
     User->>Package Repository: Remove old Package
   end
+  User->>Packager: Build Package
 ```
 
-## Remove Package from Package Context
+### Remove Package
 
 Removing a Package from Package Context means removing the Package Config from Package Context
 and then removing the Package from the Package Repository.
