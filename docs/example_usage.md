@@ -493,7 +493,7 @@ bap-builder build-app \
 After this command, the Packager creates a zip archive of the App. If it is extracted, the directory
 structure looks like this:
 
-```plainttext
+```plaintext
 example-project_v1.0.0_x86-64-fedora-41
 ├── bin
 │   └── example-project
