@@ -2,24 +2,19 @@
 
 The goal of this document is to demonstrate some of the use cases defined in
 [Use Cases](./use_cases.md). During this tutorial an example CMake based project will be created.
-This project will use a dependency - another CMake based project. The dependency will be built and
-added to the project using BacPack system. Finally the newly created project will be added to
+This Project will use a dependency - another CMake based project. The dependency will be built and
+added to the Project using BacPack system. Finally the newly created Project will be added to
 BacPack system as an App and built.
 
-The example project will use `curl` dependency for simply printing a html content of
-`https://www.example.com` webpage. In the following steps, the `curl` Package will be defined and
-built. Then the example project will be created and configured to use the `curl` Package.
+The [example Project](https://github.com/bacpack-system/example-project) will use `curl` dependency
+for simply printing a html content of `https://www.example.com` webpage. In the following steps,
+the `curl` Package will be defined and built. Then the example Project will be created and
+configured to use the `curl` Package.
 
 ## Install dependencies
 
 Install the required dependencies for using BacPack system - [docker](https://www.docker.com/) and
 [cmakelib](https://github.com/cmakelib/cmakelib).
-
-### Install Packager
-
-Packager is a tool for building Packages and Apps. It must be built from source. The build
-instructions are in the [Packager repository](https://github.com/bacpack-system/packager). The name
-of the built binary is `bap-builder`, which is used in [Build a Package](#build-a-package) section.
 
 ## Create a Package Context
 
@@ -87,7 +82,7 @@ contains complete Package Context for this tutorial with all `curl` and `zlib` C
 
 ## Define a Package
 
-The example project uses `curl` as a dependency, which depends on `zlib`. The definition files
+The example Project uses `curl` as a dependency, which depends on `zlib`. The definition files
 of these Packages (Configs) need to be created inside a Package Context.
 
 BacPack system supports building Packages for multiple target platforms. For this the Docker images
@@ -273,6 +268,14 @@ Configs.
 Firstly, the target Docker image must be build. Then if not already created, the Package Repository
 must be created. Finally the `curl` Package can be build.
 
+### Install Packager
+
+Packager is a tool for building Packages and Apps. It is available as a
+[binary release for Linux](https://github.com/bacpack-system/packager/releases) or it can be built
+from source. The build instructions are in the
+[Packager repository](https://github.com/bacpack-system/packager). The name of the built binary is
+`bap-builder`, which is used in next sections.
+
 ### Build Docker image
 
 If the used image is not built on the system, it must be built with the `build-image` Packager command.
@@ -327,10 +330,10 @@ the `zlib` Package. Other flags and settings of Packager are described in its
 
 The `curl` Package can now be used as a dependency for projects.
 
-## Add Package to a project build
+## Add Package to a Project
 
-The [example project](https://github.com/bacpack-system/example-project) will be built in the
-following steps. The project uses `curl` Package built in previous steps as a dependency.
+The [example Project](https://github.com/bacpack-system/example-project) will be built in the
+following steps. The Project uses `curl` Package built in previous steps as a dependency.
 
 ### Install cmakelib
 
@@ -339,7 +342,7 @@ install it.
 
 ### Set the Package Tracker
 
-In the project root directory, the `CMLibStorage.cmake` needs to be added with the following content:
+In the Project root directory, the `CMLibStorage.cmake` needs to be added with the following content:
 
 ```cmake
 SET(STORAGE_LIST DEP)
@@ -353,44 +356,42 @@ SET(STORAGE_LIST_DEP "https://github.com/bacpack-system/package-tracker.git")
     `STORAGE_LIST_<STORAGE>` defines the URL for each storage. In this case the Package Tracker
     is used.
 
-This links the project with Package Tracker specific for BringAuto, which enables adding Packages
-from BringAuto's specific Package Repository (The Package Tracker points to Package Repository).
-Usually the previously built Packages would be used, but for simplicity, the same Packages from
-BringAuto's specific Package Repository are used instead. These Packages are exactly the same as
-Packages defined in [example Package Context](https://github.com/bacpack-system/example-context).
+This links the Project with Package Tracker, which by default enables adding Packages from
+BringAuto's specific Package Repository (The Package Tracker points to Package Repository). Usually
+the previously built Packages would be used, but for simplicity, the same Packages from BringAuto's
+specific Package Repository are used instead. These Packages are exactly the same as Packages
+defined in [example Package Context](https://github.com/bacpack-system/example-context).
 
-!!! info
+!!! note
 
-    The local Package Repository can't be easily used when building a project, because currently
+    The local Package Repository can't be easily used when building a Project, because currently
     the BacPack system supports only upstream Package Repositories. The usage of local Package
     Repository will be added in future releases.
 
 ### Configure CMakeLists
 
-The dependencies are defined by following CMake code:
+Following code shows needed configuration of `CMakeLists.txt` for using `curl` and `zlib` Package.
+
+First, the cmakelib with required components must be added. Then the Packages must be defined with
+`BA_PACKAGE_LIBRARY` macro. Finally the Package can be included with `FIND_PACKAGE`.
 
 ```cmake
-BA_PACKAGE_LIBRARY(curl v7.79.1)
-BA_PACKAGE_LIBRARY(zlib v1.2.11 OUTPUT_PATH_VAR ZLIB_ROOT)
-```
-
-In the example project, this code is present in `cmake/Dependencies.cmake`, which is included in
-the project's `CMakeLists.txt`.
-
-Then the Package can be included with `FIND_PACKAGE`. First, cmakelib with required components must
-be added. Example CMake code:
-
-```cmake
-# Including 'cmake/Dependencies.cmake' file
-INCLUDE(cmake/Dependencies.cmake)
-
-# Adding cmakelib with components
+# Add cmakelib with components
 FIND_PACKAGE(CMLIB COMPONENTS CMDEF CMUTIL STORAGE REQUIRED)
 
-# Adding bzip and curl Package
-FIND_PACKAGE(BZIP REQUIRED)
+# Define curl and zlib Packages
+BA_PACKAGE_LIBRARY(curl v7.79.1)
+BA_PACKAGE_LIBRARY(zlib v1.2.11 OUTPUT_PATH_VAR ZLIB_ROOT)
+
+# Find bzip and curl Package
+FIND_PACKAGE(ZLIB REQUIRED)
 FIND_PACKAGE(CURL REQUIRED)
 ```
+
+!!! note
+
+    The `OUTPUT_PATH_VAR` and `ZLIB_ROOT` are helper variables for `zlib` Package, because `zlib`
+    does not provide a CMake config file.
 
 !!! note
 
@@ -401,9 +402,9 @@ FIND_PACKAGE(CURL REQUIRED)
      - [CMUTIL](https://github.com/cmakelib/cmakelib-component-cmutil) - Provides functionality for other cmakelib components
      - [STORAGE](https://github.com/cmakelib/cmakelib-component-storage) - mechanism for storing and retrieving build dependencies
 
-### Build a project
+### Build a Project
 
-At this point, the project can be built with `cmake` in the usual way:
+At this point, the Project can be built with `cmake` in the usual way:
 
 ```bash
 mkdir -p _build && cd _build
@@ -411,27 +412,28 @@ cmake ..
 make -j 8
 ```
 
-## Create an App from project
+## Create an App from Project
 
-The project with dependencies was built in previous step. Now the built project may be added to a
-Package Context as an App, which can then be built and distributed in the same way as Packages.
+The [example Project](https://github.com/bacpack-system/example-project) with dependencies was
+built in previous step. Now the built Project may be added to a Package Context as an App, which
+can then be built and distributed in the same way as Packages.
 
 ### Modify CMakeLists
 
-As previously mentioned, the Apps can't have any dependencies. So the example project must be
+As previously mentioned, the Apps can't have any dependencies. So the example Project must be
 built in a way that it has all its dependencies packaged with it. To achieve this, the
-`CMakeLists.txt` of the project must be modified to use macros for installing like this:
+`CMakeLists.txt` of the Project must be modified to use macros for installing like this:
 
 ```cmake
-  # Install created target
-  CMDEF_INSTALL(TARGET example-project)
+# Install created target
+CMDEF_INSTALL(TARGET example-project)
 
-  # Install all shared library dependencies needed for json_target
-  # and update RUNPATH.
-  BA_PACKAGE_DEPS_IMPORTED(example-project)
+# Install all shared library dependencies needed for json_target
+# and update RUNPATH.
+BA_PACKAGE_DEPS_IMPORTED(example-project)
 ```
 
-With this code, the example-project target and its dependencies are installed and the RUNPATH is
+With this code, the `example-project` target and its dependencies are installed and the RUNPATH is
 updated. When building with Packager, the files will be installed inside a Docker container and then
 they will be extracted and packaged into an App archive.  
 
@@ -440,9 +442,9 @@ they will be extracted and packaged into an App archive.
 Now the App can be added to a Package Context.
 
 ??? example "example App Config"
-    Following JSON is the Release variation App Config for the example project. The Config is
+    Following JSON is the Release variation App Config for the example Project. The Config is
     very similar to previously defined Package Configs in this example. The only important changes
-    are to Git URI and Package name to reflect this example project.
+    are to Git URI and Package name to reflect this example Project.
 
     ```json
     {

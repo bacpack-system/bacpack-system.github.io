@@ -12,7 +12,7 @@ Context](#build-a-package-from-package-context) use case.
 ### Add Package
 
 After adding a Package Config to Package Context, the Package can be built by Packager and hosted
-in a Package Repository. The Package can then be easily added to projects by including it in
+in a Package Repository. The Package can then be easily added to Projects by including it in
 CMakeLists.
 
 ```mermaid
@@ -71,7 +71,7 @@ sequenceDiagram
 ## Build a Package from Package Context
 
 The Packager is used to build Packages/Apps from Package Context. The built Packages are then
-uploaded to a Package Repository. The Packages in Package Context form a dependency trees, therefore
+uploaded to a Package Repository. The Packages in Package Context form dependency trees, therefore
 Packager supports several ways how to build the Packages:
  - build single Package
  - build single Package with its dependencies
@@ -96,7 +96,7 @@ sequenceDiagram
   Packager->>Package Repository: Uploads built Packages
 ```
 
-## Use already built Packages in CMake based project
+## Use already built Packages in Project
 
 To use a Package that was built with Packager and uploaded to a Package Repository, use Package
 Tracker macros to add this Package to the application. The Package Tracker repository URL must also

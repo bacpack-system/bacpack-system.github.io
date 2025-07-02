@@ -1,10 +1,10 @@
 # System level architecture
 
-This document describes all components of BacPack system and how they work together.
+This document describes all Components of BacPack system and how they work together.
 
 ## Components
 
-In a nutshell, BacPack system contains these components:
+In a nutshell, the BacPack system contains these Components:
 
  - Packager
  - Package Repository
@@ -12,7 +12,7 @@ In a nutshell, BacPack system contains these components:
  - Package Tracker
  - Project
 
-The interactions and relationships between these components are shown on next diagram.
+The interactions and relationships between these Components are shown on next diagram.
 
 ```mermaid
 ---
@@ -54,14 +54,14 @@ classDiagram
 
     %% EXAMPLE USAGE RELATIONSHIPS
 
-    %% Project uses PackageTracker (Composition - project owns its tracker)
+    %% Project uses PackageTracker (Composition - Project owns its tracker)
     Project *-- PackageTracker : uses
 
     %% PackageTracker interacts with repository and creates sysroot (Association)
     PackageTracker --> PackageRepository : retrieves Packages from
 ```
 
-### Main components
+### Main Components
 
 #### Packager
 
@@ -126,7 +126,7 @@ Package Tracker provides CMake macros that handle downloading, caching, and inte
 Packages/Apps from Package Repository. Projects link to Package Tracker repository to use Packages
 built in Package Repository.
 
-The Package Tracker links to a Package Repository. This link must be changed to work with project
+The Package Tracker links to a Package Repository. This link must be changed to work with Project
 specific Package Repository.
 
 ```mermaid
@@ -150,7 +150,7 @@ classDiagram
   PackageTracker --> PackageRepository : retrieves Packages from
 ```
 
-### Project specific components
+### Project specific Components
 
 #### Package Repository
 
@@ -269,7 +269,7 @@ classDiagram
 Dependency tracking library for CMake. It defines macros for dependency tracking and features
 caching for efficient use and building of dependencies.
 
-The links between cmakelib and other components are shown on next diagram.
+The links between cmakelib and other Components are shown on next diagram.
 
 ```mermaid
 ---
@@ -291,7 +291,7 @@ classDiagram
     cmakelib *-- CMLibStorage : is component of
 ```
 
-The interactions between cmakelib and other components when building a project are shown on next diagram.
+The interactions between cmakelib and other Components when building a Project are shown on next diagram.
 
 ```mermaid
 sequenceDiagram
