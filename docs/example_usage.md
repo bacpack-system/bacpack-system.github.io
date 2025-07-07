@@ -390,8 +390,8 @@ FIND_PACKAGE(CURL REQUIRED)
 
 !!! note
 
-    The `OUTPUT_PATH_VAR` and `ZLIB_ROOT` are helper variables for `zlib` Package, because `zlib`
-    does not provide a CMake config file.
+    The `ZLIB_ROOT` is a helper variables for `zlib` Package, because `zlib` does not provide a
+    CMake config file.
 
 !!! note
 
