@@ -1,0 +1,961 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://bacpack-system.github.io/architecture/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../use_cases/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.15">
+    
+    
+      
+        <title>System level architecture - BacPack Stack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#system-level-architecture" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="BacPack Stack Documentation" class="md-header__button md-logo" aria-label="BacPack Stack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            BacPack Stack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              System level architecture
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="BacPack Stack Documentation" class="md-nav__button md-logo" aria-label="BacPack Stack Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    BacPack Stack Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    System level architecture
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    System level architecture
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Components
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#main-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Main Components
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Main Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#packager" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packager
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#package-tracker" class="md-nav__link">
+    <span class="md-ellipsis">
+      Package Tracker
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#project-specific-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Project specific Components
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Project specific Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#package-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      Package Repository
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#package-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      Package Context
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#external-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      External tools
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="External tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cmakelib" class="md-nav__link">
+    <span class="md-ellipsis">
+      cmakelib
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use_cases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Use cases
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../example_usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Example usage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../term_definition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Term definition
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Components
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#main-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Main Components
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Main Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#packager" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packager
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#package-tracker" class="md-nav__link">
+    <span class="md-ellipsis">
+      Package Tracker
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#project-specific-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Project specific Components
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Project specific Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#package-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      Package Repository
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#package-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      Package Context
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#external-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      External tools
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="External tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cmakelib" class="md-nav__link">
+    <span class="md-ellipsis">
+      cmakelib
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="system-level-architecture">System level architecture</h1>
+<p>This document describes all Components of BacPack system and how they work together.</p>
+<h2 id="components">Components</h2>
+<p>In a nutshell, the BacPack system contains these Components:</p>
+<ul>
+<li>Packager</li>
+<li>Package Repository</li>
+<li>Package Context</li>
+<li>Package Tracker</li>
+<li>Project</li>
+</ul>
+<p>The interactions and relationships between these Components are shown on next diagram.</p>
+<pre class="mermaid"><code>---
+  config:
+    class:
+      hideEmptyMembersBox: true
+---
+classDiagram
+    class Packager
+    class PackageContext
+
+    namespace Docker {
+        class DockerImage
+        class DockerContainer
+    }
+
+    class PackageRepository
+    class Package
+    class Project
+    class PackageTracker
+
+    %% CORE RELATIONSHIPS
+
+    %% Packager uses PackageContext and PackageRepository (Association)
+    Packager --&gt; PackageContext : reads Configs from
+    Packager --&gt; PackageRepository : stores Packages in
+
+    %% Packager builds DockerImage
+    Packager --&gt; DockerImage : builds
+
+    %% PackageRepository aggregates Packages (Aggregation - packages are stored independently)
+    PackageRepository o-- "0..*" Package : stores
+
+    %% Docker relationships (Composition - container lifecycle tied to image)
+    DockerImage *-- "0..1" DockerContainer : creates
+
+    %% Packager creates packages through build process (Association)
+    Packager ..&gt; DockerContainer : uses for building
+
+    %% EXAMPLE USAGE RELATIONSHIPS
+
+    %% Project uses PackageTracker (Composition - Project owns its tracker)
+    Project *-- PackageTracker : uses
+
+    %% PackageTracker interacts with repository and creates sysroot (Association)
+    PackageTracker --&gt; PackageRepository : retrieves Packages from</code></pre>
+<h3 id="main-components">Main Components</h3>
+<h4 id="packager">Packager</h4>
+<p>Packager is a tool for building Packages and Apps. It takes a Package Context as an input.</p>
+<p>Both <code>build-package</code> and <code>build-app</code> commands build Package or App specified in Package Context
+in a Docker container based on existing Docker image built by <code>build-image</code> command, create a zip
+archive of its files and copy it to Package Repository.</p>
+<p>With <code>create-sysroot</code> command, Packager creates a sysroot directory from Packages in Package
+Repository for given target platform.</p>
+<pre class="mermaid"><code>---
+  config:
+    class:
+      hideEmptyMembersBox: true
+---
+classDiagram
+    class Packager {
+      -context: Context
+      -readDockerfiles(context: Context)
+      -readAppConfigs(context: Context)
+      -readPackageConfigs(context: Context)
+      -readAppConfigs(context: Context)
+      +buildImage(context: Context, imageName: string)
+      +buildPackage(context: Context, packageName: string, options: BuildOptions)
+      +buildApp(context: Context, appName: string, options: BuildOptions)
+      +createSysroot(context: Context, imageName: string, repository: PackageRepository, sysrootDir: string)
+    }
+    class PackageContext
+
+    namespace Docker {
+        class DockerImage
+        class DockerContainer
+    }
+
+    class PackageRepository
+
+    %% CORE RELATIONSHIPS
+
+    %% Packager uses PackageContext and PackageRepository (Association)
+    Packager --&gt; PackageContext : reads Configs from
+    Packager --&gt; PackageRepository : stores Packages in
+
+    %% Packager builds DockerImage
+    Packager --&gt; DockerImage : builds
+
+    %% Docker relationships (Composition - container lifecycle tied to image)
+    DockerImage *-- "0..1" DockerContainer : creates
+
+    %% Packager creates packages through build process (Association)
+    Packager ..&gt; DockerContainer : uses for building
+
+    %% Packager creates sysroot
+    Packager --&gt; Sysroot : creates and manages</code></pre>
+<h4 id="package-tracker">Package Tracker</h4>
+<p>Package Tracker provides CMake macros that handle downloading, caching, and integrating
+Packages/Apps from Package Repository. Projects link to Package Tracker repository to use Packages
+built in Package Repository.</p>
+<p>The Package Tracker links to a Package Repository. This link must be changed to work with Project
+specific Package Repository.</p>
+<pre class="mermaid"><code>---
+  config:
+    class:
+      hideEmptyMembersBox: true
+---
+classDiagram
+  class PackageTracker {
+        -repositoryUrl: string
+        -localCachePath: string
+        +downloadPackage(packageName: string, version: string): Package
+        +setupSysroot(packages: Package[]): Sysroot
+        +resolvePackageDependencies(packageName: string): Package[]
+  }
+
+  Project --&gt; PackageTracker : uses
+
+  %% PackageTracker interacts with repository and creates sysroot (Association)
+  PackageTracker --&gt; PackageRepository : retrieves Packages from</code></pre>
+<h3 id="project-specific-components">Project specific Components</h3>
+<h4 id="package-repository">Package Repository</h4>
+<p>Package Repository is a Git repository storage of Packages and Apps, which are built and copied
+there by Packager.</p>
+<pre class="mermaid"><code>---
+  config:
+    class:
+      hideEmptyMembersBox: true
+---
+classDiagram
+    class PackageRepository {
+      -gitRepositoryPath: string
+      -isLfsEnabled: boolean
+    }
+    class Package {
+      -packageFiles: file[]
+    }
+
+    %% CORE RELATIONSHIPS
+
+    %% Packager uses PackageRepository (Association)
+    Packager --&gt; PackageRepository : stores Packages in
+
+    %% PackageRepository aggregates Packages (Aggregation - packages are stored independently)
+    PackageRepository o-- "0..*" Package : stores
+
+    %% EXAMPLE USAGE RELATIONSHIPS
+
+    %% PackageTracker interacts with repository and creates sysroot (Association)
+    PackageTracker --&gt; PackageRepository : retrieves Packages from</code></pre>
+<h4 id="package-context">Package Context</h4>
+<p>Package Context contains definitions of Docker images, Packages and Apps in a <a href="https://github.com/bacpack-system/packager/blob/master/doc/ContextStructure.md">strict directory
+structure</a>. The
+Packages and Apps must use Docker images defined in the same Package Context.</p>
+<pre class="mermaid"><code>---
+  config:
+    class:
+      hideEmptyMembersBox: true
+---
+classDiagram
+    namespace PackageContext {
+        class Context {
+            -contextDirectory: string
+        }
+
+        class PackageConfig {
+            -env: Map~string, string~
+            -dependsOn: string[]
+            -gitUri: string
+            -gitRevision: string
+            -cmakeListDir: string
+            -cmakeDefines: Map~string, string~
+            -packageName: string
+            -versionTag: string
+            -platformMode: string
+            -isLibrary: boolean
+            -isDevLib: boolean
+            -isDebug: boolean
+            -dockerImageNames: string[]
+        }
+
+        class AppConfig {
+            -env: Map~string, string~
+            -gitUri: string
+            -gitRevision: string
+            -cmakeListDir: string
+            -cmakeDefines: Map~string, string~
+            -packageName: string
+            -versionTag: string
+            -platformMode: string
+            -isLibrary: boolean
+            -isDevLib: boolean
+            -isDebug: boolean
+            -dockerImageNames: string[]
+        }
+
+        class DockerConfig {
+            -imageName: string
+            -dockerfilePath: string
+        }
+    }
+
+    namespace Docker {
+        class DockerImage
+    }
+
+    %% CORE RELATIONSHIPS
+
+    %% Packager uses Context
+    Packager --&gt; Context : reads Configs from
+
+    %% Context aggregates configuration files (Aggregation - Configs exist as files)
+    Context o-- "0..*" PackageConfig : contains
+    Context o-- "0..*" AppConfig : contains
+    Context o-- "1..*" DockerConfig : contains
+
+    %% Docker relationships (Composition - container lifecycle tied to image)
+    DockerConfig --&gt; DockerImage : defines
+
+    %% Package dependencies (Dependency)
+    PackageConfig ..&gt; PackageConfig : depends on</code></pre>
+<h3 id="external-tools">External tools</h3>
+<h4 id="cmakelib">cmakelib</h4>
+<p>Dependency tracking library for CMake. It defines macros for dependency tracking and features
+caching for efficient use and building of dependencies.</p>
+<p>The links between cmakelib and other Components are shown on next diagram.</p>
+<pre class="mermaid"><code>---
+  config:
+    class:
+      hideEmptyMembersBox: true
+---
+classDiagram
+    class cmakelib
+    class CMLibStorage {
+        -storageUris: string[]
+    }
+    class PackageTracker
+
+    %% PackageTracker uses CMLibStorage (Association)
+    PackageTracker --&gt; cmakelib : uses
+
+    %% CMLibStorage uses cmakelib (Association)
+    cmakelib *-- CMLibStorage : is component of</code></pre>
+<p>The interactions between cmakelib and other Components when building a Project are shown on next diagram.</p>
+<pre class="mermaid"><code>sequenceDiagram
+  actor User
+  participant Project
+  participant cmakelib
+  participant CMLibStorage
+  participant Package Tracker
+
+  User-&gt;&gt;Project: Initiates Project&lt;br&gt;configuration
+  Project-&gt;&gt;cmakelib: Includes cmakelib with&lt;br&gt;STORAGE component
+  cmakelib-&gt;&gt;CMLibStorage: Asks for storage&lt;br&gt;initialization
+  Package Tracker-&gt;&gt;CMLibStorage: Retrieves Package&lt;br&gt;Tracker
+  CMLibStorage-&gt;&gt;CMLibStorage: Package&lt;br&gt;Tracker initialization
+  CMLibStorage-&gt;&gt;cmakelib: Package Tracker&lt;br&gt;initialized
+  cmakelib-&gt;&gt;Project: Package Tracker&lt;br&gt;initialized
+  Project-&gt;&gt;Package Tracker: Asks for Packages
+  Package Tracker-&gt;&gt;Project: Retrieves Packages
+  Project-&gt;&gt;Project: FIND_PACKAGE&lt;br&gt;for each Package
+  User-&gt;&gt;Project: Initiates Project&lt;br&gt;build
+  Project-&gt;&gt;Project: Build with dependencies</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.56ea9cef.min.js"></script>
+      
+    
+  </body>
+</html>
