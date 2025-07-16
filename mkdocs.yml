@@ -1,0 +1,40 @@
+site_name: BacPack Stack Documentation
+site_url: https://bacpack-system.github.io
+theme:
+  name: material
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - content.code.copy
+
+nav:
+  - Introduction: index.md
+  - System level architecture: architecture.md
+  - Use cases: use_cases.md
+  - Example usage: example_usage.md
+  - Term definition: term_definition.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      pygments_lang_class: true
+  
+
+
