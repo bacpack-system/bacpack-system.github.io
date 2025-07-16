@@ -1,7 +1,8 @@
 # BacPack System Documentation
 
 This repository contains the official documentation for the BacPack System, a component stack
-developed by BringAuto s.r.o. for easy dependency and package management of CMake-based projects.
+developed by [BringAuto](https://bringauto.com/) for easy dependency and package management of
+CMake-based projects.
 
 The documentation is built with MkDocs and hosted at: **https://bacpack-system.github.io**
 

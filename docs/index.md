@@ -1,6 +1,6 @@
 # Introduction
 
-This documentation covers the BacPack System, a component stack developed by BringAuto s.r.o.
+This documentation covers the BacPack System, a component stack developed by [BringAuto](https://bringauto.com/).
 This system provides a set of Components designed to create an environment for easy dependency and
 package management of CMake based projects.
 
