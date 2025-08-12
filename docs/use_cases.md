@@ -21,8 +21,6 @@ sequenceDiagram
   participant Packager
   participant Package Repository
   participant Package Context
-  participant Package Tracker
-  participant Project
 
   User->>Package Context: Adds Package definition
   User->>Packager: Build Package
@@ -40,8 +38,6 @@ sequenceDiagram
   participant Packager
   participant Package Repository
   participant Package Context
-  participant Package Tracker
-  participant Project
 
   User->>Package Context: Updates Package definition
   opt if version tag changed
@@ -52,17 +48,14 @@ sequenceDiagram
 
 ### Remove Package
 
-Removing a Package from Package Context means removing the Package Config from Package Context
-and then removing the Package from the Package Repository.
+Removing a Package means removing the Package Config from Package Context and then removing the
+Package from the Package Repository.
 
 ```mermaid
 sequenceDiagram
   actor User
-  participant Packager
   participant Package Repository
   participant Package Context
-  participant Package Tracker
-  participant Project
 
   User->>Package Context: Remove Package definition
   User->>Package Repository: Remove Package
@@ -87,8 +80,6 @@ sequenceDiagram
   participant Packager
   participant Package Repository
   participant Package Context
-  participant Package Tracker
-  participant Project
 
   User->>Packager: Initiates Package build
   Package Context->>Packager: Retrieves Package definitions
@@ -105,9 +96,7 @@ be set in `CMLibStorage.cmake` in the root directory of the application.
 ```mermaid
 sequenceDiagram
   actor User
-  participant Packager
   participant Package Repository
-  participant Package Context
   participant Package Tracker
   participant Project
   participant CMCONF system
