@@ -11,6 +11,7 @@ In a nutshell, the BacPack system contains these Components:
  - Package Context
  - Package Tracker
  - Project
+ - CMCONF system
 
 The interactions and relationships between these Components are shown on next diagram.
 
@@ -32,6 +33,7 @@ classDiagram
     class PackageRepository
     class Package
     class Project
+    class CMCONFSystem
     class PackageTracker
 
     %% CORE RELATIONSHIPS
@@ -56,6 +58,9 @@ classDiagram
 
     %% Project uses PackageTracker (Composition - Project owns its tracker)
     Project *-- PackageTracker : uses
+
+    %% Project uses CMCONF system
+    Project --> CMCONFSystem : sets
 
     %% PackageTracker interacts with repository and creates sysroot (Association)
     PackageTracker --> PackageRepository : retrieves Packages from
@@ -126,8 +131,8 @@ Package Tracker provides CMake macros that handle downloading, caching, and inte
 Packages/Apps from Package Repository. Projects link to Package Tracker repository to use Packages
 built in Package Repository.
 
-The Package Tracker links to a Package Repository. This link must be changed to work with Project
-specific Package Repository.
+The Project which uses Package Tracker must set its CMCONF system, which sets among other things
+the Package Repository URI, so the Package Tracker knows which Package Repository to use.
 
 ```mermaid
 ---
@@ -145,6 +150,10 @@ classDiagram
   }
 
   Project --> PackageTracker : uses
+  Project --> CMCONFSystem : sets
+
+  %% PackageTracker uses CMCONF system
+  CMCONFSystem --> PackageTracker : retrieves Package Repository URI
 
   %% PackageTracker interacts with repository and creates sysroot (Association)
   PackageTracker --> PackageRepository : retrieves Packages from
@@ -262,6 +271,13 @@ classDiagram
     PackageConfig ..> PackageConfig : depends on
 ```
 
+#### CMCONF system
+
+The CMCONF system is a global configuration that specifies configuration needed by Package Tracker.
+It uses the [CMCONF](https://github.com/cmakelib/cmakelib-component-cmconf) component of cmakelib.
+
+Projects must use this system in order to access Packages from the Package Repository.
+
 ### External tools
 
 #### cmakelib
@@ -278,6 +294,8 @@ specific functionality and has its own git repository. The components are:
  other cmakelib components
  - [STORAGE](https://github.com/cmakelib/cmakelib-component-storage) - mechanism for storing and
  retrieving build dependencies
+ - [CMCONF](https://github.com/cmakelib/cmakelib-component-cmconf) - global configuration system
+ for CMake projects
 
 The links between cmakelib and other Components are shown on next diagram.
 

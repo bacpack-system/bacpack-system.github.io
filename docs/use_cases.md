@@ -110,15 +110,18 @@ sequenceDiagram
   participant Package Context
   participant Package Tracker
   participant Project
+  participant CMCONF system
 
+  User->>CMCONF system: Installs CMCONF system
   User->>Project: Puts link of Package Tracker
   User->>Project: Adds desired Package to CMakeLists
   User->>Project: Initiates Project build
   rect
     Note right of Package Repository: Project build
-    Project->>Package Tracker: Asks for Packages
+    Project->>+Package Tracker: Asks for Packages
+    CMCONF system->>Package Tracker: Retrieves Package Repository location
     Package Repository->>Package Tracker: Retrieves Packages
-    Package Tracker->>Project: Adds Packages to build
+    Package Tracker->>-Project: Adds Packages to build
     Project->>Project: FIND_PACKAGE<br>for each Package
     Project->>Project: Project build
   end

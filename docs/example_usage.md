@@ -347,33 +347,114 @@ install it. Several cmakelib components will be used in following sections, but 
 them all automatically. More information about these components is in
 [System level architecture](./architecture.md/#cmakelib).
 
-### Set the Package Tracker
+### Install CMCONF system
+
+The Package Tracker requires a global configuration, which is provided by CMCONF system. This
+system is defined by a config file that sets all required variables for the Package Tracker. The
+config file must be named `CMCONF_<SYSTEM_NAME>Config.cmake`, where `<SYSTEM_NAME>` is an arbitrary
+system name that must match the name used in `CMCONF_INIT_SYSTEM(<SYSTEM_NAME>)` macro in
+`CMLibStorage.cmake`. The [example Project](https://github.com/bacpack-system/example-project) uses
+a system config file present in its repository at `config/CMCONF_EXAMPLEConfig.cmake`.
+
+??? example "CMCONF system for Package Tracker config example"
+    The following config defines a CMCONF system for Package Tracker. The system name is `EXAMPLE`.
+    It sets all required variables for the Package Tracker.
+
+    First, `CMLIB` is found with the `CMCONF` component. Then the system is initialized with the
+    `CMCONF_INIT_SYSTEM` macro. Finally, the variables are set with the `CMCONF_SET` macro. The
+    variables are described in the
+    [Package Tracker documentation](https://github.com/bacpack-system/package-tracker/blob/master/doc/GlobalConfiguration.md).
+
+    With this configuration, Package Tracker will download Packages from upstream BringAuto's
+    Package Repository by default. In this example, this behavior will be overridden later on to
+    use the local Package Repository created in previous steps.
+
+    ```cmake
+    #
+    # Example configuration for CMCONF system.
+    #
+
+    FIND_PACKAGE(CMLIB REQUIRED COMPONENTS CMCONF)
+
+    CMCONF_INIT_SYSTEM(EXAMPLE)
+
+    # Setting using upstream Package Repository by default for this system. This can be overridden by
+    # App in CMakeLists.txt.
+    CMCONF_SET(BA_PACKAGE_LOCAL_USE OFF)
+    CMCONF_SET(BA_PACKAGE_LOCAL_PATH "")
+
+    # The http authorization header is usually used for accessing private Package Repositories. This
+    # example does not need it, but the variable must be set.
+    CMCONF_SET(BA_PACKAGE_HTTP_AUTHORIZATION_HEADER "")
+
+    # Setting BringAuto's Package Repository URI Template
+    CMCONF_SET(BA_PACKAGE_URI_REVISION master)
+    CMCONF_SET(BA_PACKAGE_URI_TEMPLATE_REMOTE "https://gitea.bringauto.com/fleet-protocol/package-repository/media/<REVISION>/package/<GIT_PATH>/<PACKAGE_GROUP_NAME>/<ARCHIVE_NAME>")
+    ```
+
+After creating the config file, the CMCONF system must be installed with CMake. The following
+command installs it:
+
+```bash
+cmake -DCMCONF_INSTALL_AS_SYMLINK=ON -P config/CMCONF_EXAMPLEConfig.cmake
+```
+
+After this command, the CMCONF system is globally installed and can be used by multiple Projects.
+If user wants to uninstall the system, following command can be used:
+
+```bash
+cmake -DCMCONF_UNINSTALL=ON -P config/CMCONF_EXAMPLEConfig.cmake
+```
+
+### Set the `CMLibStorage.cmake` file
 
 In the Project root directory, the `CMLibStorage.cmake` needs to be added with the following content:
 
 ```cmake
+FIND_PACKAGE(CMLIB COMPONENTS CMCONF REQUIRED)
+
+# Adding CMCONF system
+CMCONF_INIT_SYSTEM(EXAMPLE)
+
+# Defining list of storages
 SET(STORAGE_LIST DEP)
+
+# Defining Package Tracker storage url
 SET(STORAGE_LIST_DEP "https://github.com/bacpack-system/package-tracker.git")
 ```
+
+First, `CMLIB` is found with the `CMCONF` component in order to initialize the CMCONF system,
+which is done with the `CMCONF_INIT_SYSTEM` macro. Finally, the Package Tracker URL is defined.
 
 !!! info
 
     The `CMLibStorage.cmake` file is a part of STORAGE component of cmakelib. So this component
-    must be enabled with cmakelib. The `STORAGE_LIST` variable defines the list of storages and
-    `STORAGE_LIST_<STORAGE>` defines the URL for each storage. In this case the Package Tracker
-    is used.
+    must be enabled with cmakelib (in `CMakeLists.txt`). The `STORAGE_LIST` variable defines the
+    list of storages and `STORAGE_LIST_<STORAGE>` defines the URL for each storage. In this case
+    the Package Tracker is used.
 
-This links the Project with Package Tracker, which by default enables adding Packages from
-BringAuto's specific Package Repository (The Package Tracker points to Package Repository). Usually
-the previously built Packages would be used, but for simplicity, the same Packages from BringAuto's
-specific Package Repository are used instead. These Packages are exactly the same as Packages
-defined in [example Package Context](https://github.com/bacpack-system/example-context).
+This configuration is sufficient for using Packages from upstream BringAuto's Package Repository.
+To use the local Package Repository created in previous steps instead, add the following code:
+
+```cmake
+# Setting using local Package Repository for this App.
+CMCONF_SET(BA_PACKAGE_LOCAL_USE ON)
+CMCONF_SET(BA_PACKAGE_LOCAL_PATH "/package_repo")
+```
+
+or export `BA_PACKAGE_LOCAL_PATH` environment variable before running `cmake`:
+
+```bash
+export BA_PACKAGE_LOCAL_PATH=/package_repo
+```
+
+The path must be set to the actual absolute path of the Package Repository.
 
 !!! note
 
-    The local Package Repository can't be easily used when building a Project, because currently
-    the BacPack system supports only upstream Package Repositories. The usage of local Package
-    Repository will be added in future releases.
+    Even without setting local Package Repository, the Project will be built successfully. It is
+    because the `curl` and `zlib` Packages are already built and available in upstream BringAuto's
+    Package Repository.
 
 ### Configure CMakeLists
 
