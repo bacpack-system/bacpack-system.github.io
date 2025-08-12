@@ -38,7 +38,7 @@ mkdir context && cd context && mkdir docker package app && git init
 
 The [example Package Context](https://github.com/bacpack-system/example-context)
 contains complete Package Context for this tutorial with all `curl` and `zlib` Configs,
-`example-project` app and `ubuntu2404` and `fedora41` Dockerfiles.
+`example-project` app and `ubuntu2404` and `fedora42` Dockerfiles.
 
 ??? example "Package Context directory structure"
 
@@ -56,7 +56,7 @@ contains complete Package Context for this tutorial with all `curl` and `zlib` C
     │   │   └── Dockerfile
     │   ├── ubuntu2404
     │   │   └── Dockerfile
-    │   └── fedora41
+    │   └── fedora42
     │       └── Dockerfile
     │       ...
     ├── app
@@ -112,14 +112,14 @@ used in the Package Configs to specify the Docker image to use for building the 
 Dockerfile must be named `Dockerfile`.
 
 ??? example "Dockerfile example"
-    The following Dockerfile is used for building `curl` and `zlib` Packages for Fedora 41. It
+    The following Dockerfile is used for building `curl` and `zlib` Packages for Fedora 42. It
     installs all required tools and fulfills all
     [requirements](https://github.com/bacpack-system/packager/blob/master/doc/DockerContainerRequiremetns.md).
-    The path to this Dockerfile is `context/docker/fedora41/Dockerfile`. The `fedora41` is the
+    The path to this Dockerfile is `context/docker/fedora42/Dockerfile`. The `fedora42` is the
     name of the Docker image and is used in the Package Configs.
 
     ```docker
-    FROM fedora:41
+    FROM fedora:42
 
     USER root
     RUN echo root:1234 | chpasswd
@@ -220,7 +220,7 @@ Configs.
       "DockerMatrix": {
         "ImageNames": [
           "ubuntu2404",
-          "fedora41"
+          "fedora42"
         ]
       }
     }
@@ -257,7 +257,7 @@ Configs.
       "DockerMatrix": {
         "ImageNames": [
           "ubuntu2404",
-          "fedora41"
+          "fedora42"
         ]
       }
     }
@@ -284,7 +284,7 @@ Following command builds a Docker image based on Dockerfile in given Package Con
 ```bash
 bap-builder build-image \
             --context context \
-            --image-name fedora41
+            --image-name fedora42
 ```
 
 ### Create a Package Repository
@@ -322,12 +322,12 @@ The command for building `curl` Package is:
 ```bash
 bap-builder build-package \
             --context context \
-            --image-name fedora41 \
+            --image-name fedora42 \
             --output-dir package_repo \
             --name curl --build-deps
 ```
 
-This command builds a Package `curl` defined in Context for `fedora41` image, creates an archive
+This command builds a Package `curl` defined in Context for `fedora42` image, creates an archive
 of this Package and copies it to the output-dir (Package Repository). The command with
 `--build-deps` flag also builds all dependencies of the given Package. In this case it also builds
 the `zlib` Package. Other flags and settings of Packager are described in its
@@ -477,7 +477,7 @@ Now the App can be added to a Package Context.
       },
       "DockerMatrix": {
         "ImageNames": [
-          "fedora41"
+          "fedora42"
         ]
       }
     }
@@ -490,7 +490,7 @@ This App can be built using Packager with following command:
 ```bash
 bap-builder build-app \
             --context context \
-            --image-name fedora41 \
+            --image-name fedora42 \
             --output-dir package_repo \
             --name example-project
 ```
@@ -499,7 +499,7 @@ After this command, the Packager creates a zip archive of the App. If it is extr
 structure looks like this:
 
 ```plaintext
-example-project_v1.0.0_x86-64-fedora-41
+example-project_v1.0.0_x86-64-fedora-42
 ├── bin
 │   └── example-project
 └── lib
@@ -520,4 +520,4 @@ example-project_v1.0.0_x86-64-fedora-41
 
 As can be seen, the extracted structure contains the `example-project` binary in `bin` directory
 and all its dependencies in `lib` directory. Now the App can be easily extracted to a system based
-on fedora41 image.
+on fedora42 image.
