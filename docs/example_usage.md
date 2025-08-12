@@ -343,7 +343,9 @@ following steps. The Project uses `curl` Package built in previous steps as a de
 ### Install cmakelib
 
 First, cmakelib (link in [Introduction](./index.md)) must be installed. Follow the README to
-install it.
+install it. Several cmakelib components will be used in following sections, but cmakelib installs
+them all automatically. More information about these components is in
+[System level architecture](./architecture.md/#cmakelib).
 
 ### Set the Package Tracker
 
@@ -397,15 +399,6 @@ FIND_PACKAGE(CURL REQUIRED)
 
     The `ZLIB_ROOT` is a helper variables for `zlib` Package, because `zlib` does not provide a
     CMake config file.
-
-!!! note
-
-    Each of the cmakelib components has its own git repository and adds specific functionality.
-    Any or none of the following components can be used:
-
-     - [CMDEF](https://github.com/cmakelib/cmakelib-component-cmdef) - adds wrappers for basic CMake features
-     - [CMUTIL](https://github.com/cmakelib/cmakelib-component-cmutil) - Provides functionality for other cmakelib components
-     - [STORAGE](https://github.com/cmakelib/cmakelib-component-storage) - mechanism for storing and retrieving build dependencies
 
 ### Build a Project
 

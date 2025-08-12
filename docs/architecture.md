@@ -269,6 +269,16 @@ classDiagram
 Dependency tracking library for CMake. It defines macros for dependency tracking and features
 caching for efficient use and building of dependencies.
 
+It has several components, which can be used independently or together. Each component provides
+specific functionality and has its own git repository. The components are:
+
+ - [CMDEF](https://github.com/cmakelib/cmakelib-component-cmdef) - adds wrappers for basic CMake
+ features
+ - [CMUTIL](https://github.com/cmakelib/cmakelib-component-cmutil) - Provides functionality for
+ other cmakelib components
+ - [STORAGE](https://github.com/cmakelib/cmakelib-component-storage) - mechanism for storing and
+ retrieving build dependencies
+
 The links between cmakelib and other Components are shown on next diagram.
 
 ```mermaid
