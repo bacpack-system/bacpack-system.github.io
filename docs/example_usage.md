@@ -298,8 +298,13 @@ The creation of Package Repository is basically creating an empty git repository
 commands will create it in the current directory:
 
 ```bash
-mkdir package_repo && cd package_repo && git init
+mkdir package_repo && cd package_repo && git init && git lfs install
 ```
+
+!!! note
+    The Packages are usually large in size, so it is recommended to use git lfs for storing them.
+    If the Package Repository is used only locally, the git lfs is not necessary. Packager does not
+    require it.
 
 ### Build a Package
 
