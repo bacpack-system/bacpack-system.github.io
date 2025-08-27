@@ -298,13 +298,16 @@ The creation of Package Repository is basically creating an empty git repository
 commands will create it in the current directory:
 
 ```bash
-mkdir package_repo && cd package_repo && git init && git lfs install
+mkdir package_repo && cd package_repo && git init
 ```
 
-!!! note
-    The Packages are usually large in size, so it is recommended to use git lfs for storing them.
-    If the Package Repository is used only locally, the git lfs is not necessary. Packager does not
-    require it.
+The Packages are usually large in size, so it is recommended to use git lfs for storing them.
+If the Package Repository is used only locally, the git lfs is not necessary. Packager does not
+require it. To set up git lfs, run following command in the Package Repository directory: 
+
+```bash
+git lfs install && git lfs track "*.zip" && git add .gitattributes && git commit -m "Initial commit"
+```
 
 ### Build a Package
 
@@ -365,9 +368,13 @@ a system config file present in its repository at `config/CMCONF_EXAMPLEConfig.c
     variables are described in the
     [Package Tracker documentation](https://github.com/bacpack-system/package-tracker/blob/master/doc/GlobalConfiguration.md).
 
-    With this configuration, Package Tracker will download Packages from upstream BringAuto's
-    Package Repository by default. In this example, this behavior will be overridden later on to
-    use the local Package Repository created in previous steps.
+    The BA_PACKAGE_URI_TEMPLATE_REMOTE variable is set to a general URI. The actual URI is set in
+    the App's `CMakeLists.txt` file. Important part of the URI template are fields in <> brackets,
+    which are replaced by actual values when downloading a Package.
+
+    With this configuration, Package Tracker will download Packages from upstream Package
+    Repository referenced in the URI template by default. In this example, this behavior will be
+    overridden later on to use the local Package Repository created in previous steps.
 
     ```cmake
     #
@@ -389,7 +396,7 @@ a system config file present in its repository at `config/CMCONF_EXAMPLEConfig.c
 
     # Setting BringAuto's Package Repository URI Template
     CMCONF_SET(BA_PACKAGE_URI_REVISION master)
-    CMCONF_SET(BA_PACKAGE_URI_TEMPLATE_REMOTE "https://gitea.bringauto.com/fleet-protocol/package-repository/media/<REVISION>/package/<GIT_PATH>/<PACKAGE_GROUP_NAME>/<ARCHIVE_NAME>")
+    CMCONF_SET(BA_PACKAGE_URI_TEMPLATE_REMOTE "https://gitea.com/some/path/media/<REVISION>/package/<GIT_PATH>/<PACKAGE_GROUP_NAME>/<ARCHIVE_NAME>")
     ```
 
 After creating the config file, the CMCONF system must be installed with CMake. The following
@@ -437,7 +444,7 @@ This configuration is sufficient for using Packages from upstream BringAuto's Pa
 To use the local Package Repository created in previous steps instead, add the following code:
 
 ```cmake
-# Setting using local Package Repository for this App.
+# Setting using local Package Repository for this App. The path must be absolute.
 CMCONF_SET(BA_PACKAGE_LOCAL_USE ON)
 CMCONF_SET(BA_PACKAGE_LOCAL_PATH "/package_repo")
 ```

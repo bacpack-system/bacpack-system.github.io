@@ -81,10 +81,10 @@ sequenceDiagram
   participant Package Repository
   participant Package Context
 
-  User->>Packager: Initiates Package build
+  User->>+Packager: Initiates Package build
   Package Context->>Packager: Retrieves Package definitions
   Packager->>Packager: Package build
-  Packager->>Package Repository: Uploads built Packages
+  Packager->>-Package Repository: Uploads built Packages
 ```
 
 ## Use already built Packages in Project
@@ -104,7 +104,7 @@ sequenceDiagram
   User->>CMCONF system: Installs CMCONF system
   User->>Project: Puts link of Package Tracker
   User->>Project: Adds desired Package to CMakeLists
-  User->>Project: Initiates Project build
+  User->>+Project: Initiates Project build
   rect
     Note right of Package Repository: Project build
     Project->>+Package Tracker: Asks for Packages
@@ -112,6 +112,6 @@ sequenceDiagram
     Package Repository->>Package Tracker: Retrieves Packages
     Package Tracker->>-Project: Adds Packages to build
     Project->>Project: FIND_PACKAGE<br>for each Package
-    Project->>Project: Project build
+    Project->>-Project: Project build
   end
 ```

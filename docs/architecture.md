@@ -153,7 +153,7 @@ classDiagram
   Project --> CMCONFSystem : sets
 
   %% PackageTracker uses CMCONF system
-  CMCONFSystem --> PackageTracker : retrieves Package Repository URI
+  PackageTracker --> CMCONFSystem : retrieves Package Repository URI
 
   %% PackageTracker interacts with repository and creates sysroot (Association)
   PackageTracker --> PackageRepository : retrieves Packages from
@@ -293,7 +293,7 @@ specific functionality and has its own git repository. The components are:
  - [CMUTIL](https://github.com/cmakelib/cmakelib-component-cmutil) - Provides functionality for
  other cmakelib components
  - [STORAGE](https://github.com/cmakelib/cmakelib-component-storage) - mechanism for storing and
- retrieving build dependencies
+ retrieving CMake dependencies
  - [CMCONF](https://github.com/cmakelib/cmakelib-component-cmconf) - global configuration system
  for CMake projects
 
@@ -317,6 +317,9 @@ classDiagram
 
     %% CMLibStorage uses cmakelib (Association)
     cmakelib *-- CMLibStorage : is component of
+
+    cmakelib *-- CMCONF : is component of
+    cmakelib *-- CMDEF : is component of
 ```
 
 The interactions between cmakelib and other Components when building a Project are shown on next diagram.
@@ -326,11 +329,14 @@ sequenceDiagram
   actor User
   participant Project
   participant cmakelib
+  participant CMDEF
   participant CMLibStorage
   participant Package Tracker
 
   User->>Project: Initiates Project<br>configuration
   Project->>cmakelib: Includes cmakelib with<br>STORAGE component
+  cmakelib->>CMDEF: CMDEF environment<br>initialization
+  CMDEF->>cmakelib: CMDEF environment<br>initialized
   cmakelib->>CMLibStorage: Asks for storage<br>initialization
   Package Tracker->>CMLibStorage: Retrieves Package<br>Tracker
   CMLibStorage->>CMLibStorage: Package<br>Tracker initialization
