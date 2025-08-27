@@ -26,6 +26,10 @@ or organization:
  - **Package Context** - A directory structure containing configuration files that define how to
  build Packages, including build settings and Docker environments.
 
+ - **CMCONF system** - Global configuration that specifies information needed by Package Tracker
+ (including URI to Package Repository), it uses the
+ [CMCONF](https://github.com/cmakelib/cmakelib-component-cmconf) component of cmakelib
+
 These Components are customized for each Project's specific needs - different Projects will have
 different Packages to build and different build requirements.
 

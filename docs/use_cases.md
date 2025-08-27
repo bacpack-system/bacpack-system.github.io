@@ -21,8 +21,6 @@ sequenceDiagram
   participant Packager
   participant Package Repository
   participant Package Context
-  participant Package Tracker
-  participant Project
 
   User->>Package Context: Adds Package definition
   User->>Packager: Build Package
@@ -40,8 +38,6 @@ sequenceDiagram
   participant Packager
   participant Package Repository
   participant Package Context
-  participant Package Tracker
-  participant Project
 
   User->>Package Context: Updates Package definition
   opt if version tag changed
@@ -52,17 +48,14 @@ sequenceDiagram
 
 ### Remove Package
 
-Removing a Package from Package Context means removing the Package Config from Package Context
-and then removing the Package from the Package Repository.
+Removing a Package means removing the Package Config from Package Context and then removing the
+Package from the Package Repository.
 
 ```mermaid
 sequenceDiagram
   actor User
-  participant Packager
   participant Package Repository
   participant Package Context
-  participant Package Tracker
-  participant Project
 
   User->>Package Context: Remove Package definition
   User->>Package Repository: Remove Package
@@ -87,13 +80,11 @@ sequenceDiagram
   participant Packager
   participant Package Repository
   participant Package Context
-  participant Package Tracker
-  participant Project
 
-  User->>Packager: Initiates Package build
+  User->>+Packager: Initiates Package build
   Package Context->>Packager: Retrieves Package definitions
   Packager->>Packager: Package build
-  Packager->>Package Repository: Uploads built Packages
+  Packager->>-Package Repository: Uploads built Packages
 ```
 
 ## Use already built Packages in Project
@@ -105,21 +96,22 @@ be set in `CMLibStorage.cmake` in the root directory of the application.
 ```mermaid
 sequenceDiagram
   actor User
-  participant Packager
   participant Package Repository
-  participant Package Context
   participant Package Tracker
   participant Project
+  participant CMCONF system
 
+  User->>CMCONF system: Installs CMCONF system
   User->>Project: Puts link of Package Tracker
   User->>Project: Adds desired Package to CMakeLists
-  User->>Project: Initiates Project build
+  User->>+Project: Initiates Project build
   rect
     Note right of Package Repository: Project build
-    Project->>Package Tracker: Asks for Packages
+    Project->>+Package Tracker: Asks for Packages
+    CMCONF system->>Package Tracker: Retrieves Package Repository location
     Package Repository->>Package Tracker: Retrieves Packages
-    Package Tracker->>Project: Adds Packages to build
+    Package Tracker->>-Project: Adds Packages to build
     Project->>Project: FIND_PACKAGE<br>for each Package
-    Project->>Project: Project build
+    Project->>-Project: Project build
   end
 ```
