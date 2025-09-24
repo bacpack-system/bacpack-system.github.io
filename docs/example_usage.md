@@ -98,7 +98,7 @@ The image defines a build environment for building Packages. Defined Docker imag
 with some [requirements](https://github.com/bacpack-system/packager/blob/master/doc/DockerContainerRequirements.md),
 briefly:
 
- - CMake must be installed,
+ - CMake or Meson must be installed,
  - SSH must be configured with root login and password `1234`,
  - and `uname` must be installed.
 
@@ -160,9 +160,9 @@ use, the CMake options, etc. The Config structure is described in
 Some of the important fields of Config are:
 
  - `DependsOn` - list of dependency Packages, all Packages in the list must be defined in the same Package Context
- - `Git/URI` - URI to a CMake based git repository with source code of the Package
- - `Git/Revision` - tag or branch to use for build
- - `Build/CMake/Defines` - CMake options
+ - `Git/URI` - URI to a CMake or Meson based git repository with source code of the Package
+ - `Git/Revision` - tag, branch or commit to use for build
+ - `Build/CMake/Defines` - CMake options (or `Build/Meson/Options` and `Build/Meson/Defines` for Meson)
  - `Package/Name` - name of the Package
  - `DockerMatrix/ImageNames` - list of Docker images to build the Package for
 
