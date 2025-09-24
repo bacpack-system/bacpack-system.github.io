@@ -70,7 +70,8 @@ classDiagram
 
 #### Packager
 
-Packager is a tool for building Packages and Apps. It takes a Package Context as an input.
+Packager is a tool for building Packages and Apps. It takes a Package Context as an input. It
+supports both CMake and Meson build systems for building Packages.
 
 Both `build-package` and `build-app` commands build Package or App specified in Package Context
 in a Docker container based on existing Docker image built by `build-image` command, create a zip
