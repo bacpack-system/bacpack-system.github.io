@@ -95,7 +95,7 @@ The following sections describe how to define Docker images and Packages.
 
 The Packages are built inside a Docker container created from image specified by Dockerfile.
 The image defines a build environment for building Packages. Defined Docker image must comply
-with some [requirements](https://github.com/bacpack-system/packager/blob/master/doc/DockerContainerRequiremetns.md),
+with some [requirements](https://github.com/bacpack-system/packager/blob/master/doc/DockerContainerRequirements.md),
 briefly:
 
  - CMake must be installed,
@@ -114,7 +114,7 @@ Dockerfile must be named `Dockerfile`.
 ??? example "Dockerfile example"
     The following Dockerfile is used for building `curl` and `zlib` Packages for Fedora 42. It
     installs all required tools and fulfills all
-    [requirements](https://github.com/bacpack-system/packager/blob/master/doc/DockerContainerRequiremetns.md).
+    [requirements](https://github.com/bacpack-system/packager/blob/master/doc/DockerContainerRequirements.md).
     The path to this Dockerfile is `context/docker/fedora42/Dockerfile`. The `fedora42` is the
     name of the Docker image and is used in the Package Configs.
 
